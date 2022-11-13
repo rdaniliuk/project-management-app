@@ -1,0 +1,20 @@
+.header {
+  background-color: #FFCD32;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 300;
+  transition: 0.3s;
+}
+
+.header.sticky {
+  background-color: #FFA932;
+  padding: 0px 10px 0px 10px;
+}
+
+.userSettings {
+  display: flex;
+  gap: 20px;
+}
