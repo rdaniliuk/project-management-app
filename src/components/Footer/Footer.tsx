@@ -3,6 +3,7 @@ import classes from './Footer.module.css';
 import 'antd/dist/antd.css';
 import { GithubOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
+import { TMATE1, TMATE2, TMATE3 } from 'teamInfo';
 
 const Footer = () => {
   return (
@@ -11,17 +12,17 @@ const Footer = () => {
         <img src="https://rs.school/images/rs_school_js.svg" alt="rs-logo" />
       </a>
       <div className={classes.link}>
-        <a href="https://github.com/jaysuno0" target="blank">
+        <a href={TMATE3[2]} target="blank">
           <Button icon={<GithubOutlined />} size={'small'} type={'link'}>
             Daniil
           </Button>
         </a>
-        <a href="https://github.com/Alexander-M-rss" target="blank">
+        <a href={TMATE2[2]} target="blank">
           <Button icon={<GithubOutlined />} size={'small'} type={'link'}>
             Oleksandr
           </Button>
         </a>
-        <a href="https://github.com/rdaniliuk" target="blank">
+        <a href={TMATE1[2]} target="blank">
           <Button icon={<GithubOutlined />} size={'small'} type={'link'}>
             Roman
           </Button>

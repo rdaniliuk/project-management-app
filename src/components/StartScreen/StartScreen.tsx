@@ -2,28 +2,9 @@ import { GithubFilled, LinkedinFilled } from '@ant-design/icons';
 import { Button } from 'antd';
 import React from 'react';
 import classes from './StartScreen.module.css';
+import { TMATE1, TMATE2, TMATE3 } from 'teamInfo';
+import { TITLE_IMAGE, ABOUT_IMAGE } from 'imageLink';
 
-const TMATE1 = [
-  'Roman',
-  'https://cdni.iconscout.com/illustration/premium/thumb/farmer-holding-umbrella-5481939-4591517.png',
-  'https://github.com/rdaniliuk',
-  'https://www.linkedin.com/in/roman-daniliuk-6083b612a/',
-];
-const TMATE2 = [
-  'Oleksandr',
-  'https://cdni.iconscout.com/illustration/premium/thumb/delivery-in-rain-5402140-4518110.png',
-  'https://cdni.iconscout.com/illustration/premium/thumb/farmer-holding-umbrella-5481939-4591517.png',
-  'https://github.com/Alexander-M-rss',
-  '',
-];
-const TMATE3 = [
-  'Daniil',
-  'https://cdni.iconscout.com/illustration/premium/thumb/male-engineer-holding-umbrella-5459354-4551753.png',
-  'https://github.com/jaysuno0',
-  '',
-];
-const TITLE_IMAGE =
-  'https://cdni.iconscout.com/illustration/premium/thumb/man-walking-in-rain-while-using-smartphone-4981190-4150835.png';
 const StartScreen = () => {
   return (
     <div className={classes.wrapper}>
@@ -61,10 +42,7 @@ const StartScreen = () => {
           </p>
         </div>
         <div className={classes.about__image}>
-          <img
-            src="https://cdni.iconscout.com/illustration/premium/thumb/happy-schoolgirl-walk-under-umbrella-at-rainy-season-5683488-4736231.png"
-            alt="about-image"
-          />
+          <img src={ABOUT_IMAGE} alt="about-image" />
         </div>
       </div>
       <div className={classes.team__wrapper}>

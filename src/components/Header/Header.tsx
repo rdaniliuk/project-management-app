@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import classes from './Header.module.css';
 import 'antd/dist/antd.css';
 import {
@@ -10,23 +10,10 @@ import {
   ZhihuCircleFilled,
 } from '@ant-design/icons';
 import { Button } from 'antd';
+import { useHeader } from 'components/hooks/useHeader';
 
 const Header = () => {
-  const [loginStatus, setLoginStatus] = useState(false);
-  const headerWrapper = useRef<HTMLDivElement | null>(null);
-
-  const scroll = () => {
-    if (headerWrapper.current) {
-      window.pageYOffset > 0
-        ? headerWrapper.current.classList.add(`${classes.sticky}`)
-        : headerWrapper.current.classList.remove(`${classes.sticky}`);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('scroll', scroll);
-  }, []);
-
+  const { loginStatus, setLoginStatus, headerWrapper } = useHeader();
   return (
     <div className={classes.header} ref={headerWrapper}>
       <Button icon={<LayoutTwoTone />} size={'middle'} type={'link'}></Button>
