@@ -14,6 +14,7 @@ import { useHeader } from 'components/hooks/useHeader';
 
 const Header = () => {
   const { loginStatus, setLoginStatus, headerWrapper } = useHeader();
+
   return (
     <div className={classes.header} ref={headerWrapper}>
       <Button icon={<LayoutTwoTone />} size={'middle'} type={'link'}></Button>
@@ -24,7 +25,14 @@ const Header = () => {
         </div>
       ) : null}
       <div>
-        <Button icon={<ZhihuCircleFilled />} size={'middle'} type={'link'}>
+        <Button
+          icon={<ZhihuCircleFilled />}
+          size={'middle'}
+          type={'link'}
+          onClick={() => {
+            console.log('language callback');
+          }}
+        >
           EN
         </Button>
         {loginStatus ? (

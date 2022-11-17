@@ -1,0 +1,9 @@
+.template {
+  border: 3px solid #1890ff;
+  border-radius: 10px;
+  width: 280px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
