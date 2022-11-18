@@ -1,9 +1,7 @@
 .main {
   display: flex;
-  align-items: center;
   justify-content: center;
-  flex-grow: 1;
-  background-color: #96CFFF;
-  padding: 10px;
-  position: relative;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
 }

@@ -69,8 +69,14 @@
 .tmate__info {
   display: flex;
   flex-direction: column;
-  text-align: center;
+  writing-mode: vertical-lr;
+  text-orientation: upright;
 }
+
+.tmate__info h3 {
+  margin: 0;
+}
+
 
 .tmate__text li {
   list-style-type: none
@@ -92,6 +98,9 @@
   }
   .about__image {
     display: block;
+  }
+  .tmate__info {
+    writing-mode: horizontal-tb;
   }
 }
 

@@ -1,11 +1,20 @@
 import React from 'react';
 import classes from './Main.module.css';
-import StartScreen from '../StartScreen/StartScreen';
+import CreateBoardTemplate from 'components/CreateBoardTemplate/CreateBoardTemplate';
+import BoardTemplate from 'components/BoadrTemplate/BoardTemplate';
+import Loader from 'components/Loader/Loader';
 
 const Main = () => {
+  const boardTestData = {
+    name: 'Test Name',
+    description: 'test test test  test test test',
+  };
   return (
     <div className={classes.main}>
-      <StartScreen />
+      <Loader />
+      <BoardTemplate {...boardTestData} />
+      <BoardTemplate {...boardTestData} />
+      <CreateBoardTemplate />
     </div>
   );
 };
