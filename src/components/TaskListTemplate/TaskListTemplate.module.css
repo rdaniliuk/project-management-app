@@ -1,0 +1,33 @@
+
+.list {
+  background-color: #ffcd32;
+  max-height: 270px;
+  min-width: 300px;
+  border-radius: 10px;
+  padding: 10px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #5450FF;
+  border-radius: 10px;
+  padding: 5px 10px;
+  color: #fff;
+}
+
+.list__delete {
+  display: flex;
+}
+
+.tasks {
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 5px
+}
