@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import { Input, Modal } from 'antd';
 
-const CreateBoard = () => {
+const Create = (type: string) => {
   const [open, setOpen] = useState(false);
-  const [nameBoardValue, setNameBoardValue] = useState('');
-  const [descriptionBoardValue, setDescriptionBoardValue] = useState('');
+  const [nameValue, setNameValue] = useState('');
+  const [descriptionValue, setDescriptionValue] = useState('');
 
   const showModal = () => {
-    setNameBoardValue('');
-    setDescriptionBoardValue('');
+    setNameValue('');
+    setDescriptionValue('');
     setOpen(true);
   };
 
@@ -23,7 +23,7 @@ const CreateBoard = () => {
 
   return (
     <Modal
-      title="Create Board"
+      title={`Create ${type}`}
       open={open}
       onOk={onCreate}
       onCancel={hideModal}
@@ -31,23 +31,23 @@ const CreateBoard = () => {
       cancelText="Back"
     >
       <Input
-        placeholder="Board Name"
+        placeholder={`${type} Name`}
         allowClear
-        value={nameBoardValue}
+        value={nameValue}
         onChange={(e) => {
-          setNameBoardValue(e.target.value);
+          setNameValue(e.target.value);
         }}
       />
       <Input
         placeholder="Description"
         allowClear
-        value={descriptionBoardValue}
+        value={descriptionValue}
         onChange={(e) => {
-          setDescriptionBoardValue(e.target.value);
+          setDescriptionValue(e.target.value);
         }}
       />
     </Modal>
   );
 };
 
-export default CreateBoard;
+export default Create;

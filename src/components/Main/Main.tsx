@@ -3,6 +3,7 @@ import classes from './Main.module.css';
 import CreateBoardTemplate from 'components/CreateBoardTemplate/CreateBoardTemplate';
 import BoardTemplate from 'components/BoadrTemplate/BoardTemplate';
 import Loader from 'components/Loader/Loader';
+import Board from 'components/Board/Board';
 
 const Main = () => {
   const boardTestData = {
@@ -11,10 +12,11 @@ const Main = () => {
   };
   return (
     <div className={classes.main}>
-      <Loader />
+      {/* <Loader />
       <BoardTemplate {...boardTestData} />
       <BoardTemplate {...boardTestData} />
-      <CreateBoardTemplate />
+      <CreateBoardTemplate /> */}
+      <Board />
     </div>
   );
 };

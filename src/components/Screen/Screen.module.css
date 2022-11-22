@@ -1,7 +1,4 @@
 .Screen {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   flex-grow: 1;
   background-color: #96CFFF;
   padding: 10px;
