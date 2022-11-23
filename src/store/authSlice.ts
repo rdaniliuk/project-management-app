@@ -127,16 +127,18 @@ const authSlice = createSlice({
       .addCase(signIn.pending, (auth) => {
         auth.id = '';
         auth.token = '';
+        auth.errMsg = '';
+        auth.statusCode = '';
         auth.isLogged = false;
         auth.isLoading = true;
       })
       .addCase(signIn.fulfilled, (auth, action) => {
         const { token, statusCode, message } = action.payload;
-        const decodetToken = decodeToken<IToken>(token);
+        const decodedToken = decodeToken<IToken>(token);
 
-        if (decodetToken) {
+        if (decodedToken) {
           auth.token = token;
-          auth.id = decodetToken.id;
+          auth.id = decodedToken.id;
         }
         auth.errMsg = message;
         auth.statusCode = statusCode;
@@ -160,4 +162,5 @@ const authSlice = createSlice({
   },
 });
 
+export const { resetAuth } = authSlice.actions;
 export default authSlice.reducer;
