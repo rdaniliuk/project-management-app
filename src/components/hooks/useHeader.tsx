@@ -1,8 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import classes from '../Header/Header.module.css';
 
 export function useHeader() {
-  const [loginStatus, setLoginStatus] = useState(false);
   const headerWrapper = useRef<HTMLDivElement | null>(null);
 
   const scroll = () => {
@@ -17,9 +16,5 @@ export function useHeader() {
     window.addEventListener('scroll', scroll);
   }, []);
 
-  return {
-    loginStatus,
-    setLoginStatus,
-    headerWrapper,
-  };
+  return headerWrapper;
 }
