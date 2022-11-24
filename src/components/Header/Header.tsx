@@ -52,7 +52,12 @@ const Header = () => {
           </>
         ) : (
           <>
-            <Button icon={<UserAddOutlined />} size={'large'} type={'link'} onClick={() => {}}>
+            <Button
+              icon={<UserAddOutlined />}
+              size={'large'}
+              type={'link'}
+              onClick={() => navigate('/auth', { state: 'signup' })}
+            >
               Sign up
             </Button>
             <Button

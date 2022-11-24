@@ -4,7 +4,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, notification } from 'antd';
 import classes from './SignIn.module.css';
 import { ISignInOpt, signIn } from 'store/authSlice';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Loader from 'components/Loader/Loader';
 import { useForm } from 'antd/es/form/Form';
 
@@ -63,7 +63,10 @@ const SignIn = () => {
                 Sign in
               </Button>
             </Form.Item>
-            Or <a href="">register now!</a>
+            Or{' '}
+            <Link to="/auth" state={{ isSignUp: true }}>
+              register now!
+            </Link>
           </Form>
         )}
       </div>
