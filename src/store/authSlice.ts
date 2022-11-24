@@ -2,6 +2,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { decodeToken } from 'react-jwt';
 import { AUTH_URL } from './apiUrls';
 
+const TKN = 'pmaTkn';
+
 export interface IAuth {
   id: string;
   token: string;
@@ -119,7 +121,26 @@ const authSlice = createSlice({
   initialState: initialAuth,
   reducers: {
     resetAuth() {
+      localStorage.clear();
+
       return initialAuth;
+    },
+    loadToken(auth) {
+      const token = localStorage.getItem(TKN);
+      const decodedToken = token ? decodeToken<IToken>(token) : null;
+
+      if (decodedToken) {
+        const date = new Date();
+
+        if (+decodedToken.exp * 1000 > date.getTime()) {
+          auth.token = token || '';
+          auth.id = decodedToken.id;
+          auth.isLogged = true;
+          auth.isLoading = false;
+          auth.statusCode = '';
+          auth.errMsg = '';
+        }
+      }
     },
   },
   extraReducers: (builder) => {
@@ -131,6 +152,7 @@ const authSlice = createSlice({
         auth.statusCode = '';
         auth.isLogged = false;
         auth.isLoading = true;
+        localStorage.clear;
       })
       .addCase(signIn.fulfilled, (auth, action) => {
         const { token, statusCode, message } = action.payload;
@@ -139,6 +161,7 @@ const authSlice = createSlice({
         if (decodedToken) {
           auth.token = token;
           auth.id = decodedToken.id;
+          localStorage.setItem(TKN, token);
         }
         auth.errMsg = message;
         auth.statusCode = statusCode;
@@ -162,5 +185,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { resetAuth } = authSlice.actions;
+export const { resetAuth, loadToken } = authSlice.actions;
 export default authSlice.reducer;

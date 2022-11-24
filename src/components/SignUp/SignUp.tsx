@@ -4,26 +4,19 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, notification } from 'antd';
 import classes from './SignUp.module.css';
 import { ISignUpOpt, signUp } from 'store/authSlice';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Loader from 'components/Loader/Loader';
 import { useForm } from 'antd/es/form/Form';
 
 const SignUp = () => {
   const [form] = useForm<ISignUpOpt>();
-  const { isLogged, isLoading, errMsg } = useAppSelector((state) => state.auth);
+  const { isLoading, errMsg } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const [notify, contextHolder] = notification.useNotification();
 
   const onFinish = ({ name, login, password }: ISignUpOpt) => {
     dispatch(signUp({ name, login, password }));
   };
-
-  useEffect(() => {
-    if (isLogged) {
-      navigate('/', { replace: true });
-    }
-  }, [isLogged, navigate]);
 
   useEffect(() => {
     if (errMsg) {

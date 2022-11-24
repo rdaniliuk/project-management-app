@@ -26,7 +26,14 @@ const Header = () => {
       <Button icon={<LayoutTwoTone />} size={'large'} type={'link'}></Button>
       {isLogged ? (
         <div className={classes.userSettings}>
-          <Button icon={<ScheduleTwoTone />} size={'large'} type={'link'}></Button>
+          <Button
+            icon={<ScheduleTwoTone />}
+            size={'large'}
+            type={'link'}
+            onClick={() => navigate('/')}
+          >
+            Boards
+          </Button>
         </div>
       ) : null}
       <div>
@@ -44,7 +51,7 @@ const Header = () => {
               type={'link'}
               onClick={() => {
                 dispatch(resetAuth());
-                navigate('/');
+                navigate('/welcome');
               }}
             >
               Logout
