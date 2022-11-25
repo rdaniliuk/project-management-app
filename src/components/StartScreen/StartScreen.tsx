@@ -1,11 +1,19 @@
 import { GithubFilled, LinkedinFilled } from '@ant-design/icons';
 import { Button } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 import classes from './StartScreen.module.css';
 import { TMATE1, TMATE2, TMATE3 } from 'teamInfo';
 import { TITLE_IMAGE, ABOUT_IMAGE } from 'imageLink';
+import { useAppDispatch } from 'store/hooks';
+import { loadToken } from 'store/authSlice';
 
 const StartScreen = () => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(loadToken());
+  }, [dispatch]);
+
   return (
     <div className={classes.wrapper}>
       <div className={classes.info}>
