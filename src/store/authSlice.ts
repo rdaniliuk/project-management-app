@@ -4,6 +4,8 @@ import { AUTH_URL } from './apiUrls';
 
 const TKN = 'pmaTkn';
 
+export const authErr = [401, 403];
+
 export interface IAuth {
   id: string;
   token: string;
