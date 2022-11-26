@@ -13,17 +13,32 @@ const Footer = () => {
       </a>
       <div className={classes.link}>
         <a href={TMATE3[2]} target="blank">
-          <Button icon={<GithubOutlined />} size={'small'} type={'link'}>
+          <Button
+            icon={<GithubOutlined />}
+            size={'small'}
+            type={'link'}
+            style={{ color: '#ffcd32' }}
+          >
             Daniil
           </Button>
         </a>
         <a href={TMATE2[2]} target="blank">
-          <Button icon={<GithubOutlined />} size={'small'} type={'link'}>
+          <Button
+            icon={<GithubOutlined />}
+            size={'small'}
+            type={'link'}
+            style={{ color: '#ffcd32' }}
+          >
             Oleksandr
           </Button>
         </a>
         <a href={TMATE1[2]} target="blank">
-          <Button icon={<GithubOutlined />} size={'small'} type={'link'}>
+          <Button
+            icon={<GithubOutlined />}
+            size={'small'}
+            type={'link'}
+            style={{ color: '#ffcd32' }}
+          >
             Roman
           </Button>
         </a>

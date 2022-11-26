@@ -24,26 +24,24 @@ const Header = () => {
   return (
     <div className={classes.header} ref={headerWrapper}>
       <Button icon={<LayoutTwoTone />} size={'large'} type={'link'}></Button>
-      {isLogged ? (
-        <div className={classes.userSettings}>
+      <div>
+        <Button icon={<ZhihuCircleFilled />} size={'large'} type={'link'}>
+          EN
+        </Button>
+        {isLogged ? (
           <Button
             icon={<ScheduleTwoTone />}
             size={'large'}
             type={'link'}
             onClick={() => navigate('/')}
           >
-            Boards
+            <div className={classes.button__name}>Boards</div>
           </Button>
-        </div>
-      ) : null}
-      <div>
-        <Button icon={<ZhihuCircleFilled />} size={'large'} type={'link'}>
-          EN
-        </Button>
+        ) : null}
         {isLogged ? (
           <>
             <Button icon={<UserOutlined />} size={'large'} type={'link'} onClick={() => {}}>
-              Profile
+              <div className={classes.button__name}>Profile</div>
             </Button>
             <Button
               icon={<LogoutOutlined />}
@@ -54,7 +52,7 @@ const Header = () => {
                 navigate('/welcome');
               }}
             >
-              Logout
+              <div className={classes.button__name}>Logout</div>
             </Button>
           </>
         ) : (
@@ -65,7 +63,7 @@ const Header = () => {
               type={'link'}
               onClick={() => navigate('/auth', { state: 'signup' })}
             >
-              Sign up
+              <div className={classes.button__name}>Sign up</div>
             </Button>
             <Button
               icon={<LoginOutlined />}
@@ -73,7 +71,7 @@ const Header = () => {
               type={'link'}
               onClick={() => navigate('/auth')}
             >
-              Sign in
+              <div className={classes.button__name}>Sign in</div>
             </Button>
           </>
         )}

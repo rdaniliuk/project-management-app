@@ -86,6 +86,12 @@ const TaskListTemplate = () => {
         <Task />
         <Task />
         <Task />
+        <Task />
+        <Task />
+        <Task />
+        <Task />
+        <Task />
+        <Task />
       </div>
     </div>
   );
