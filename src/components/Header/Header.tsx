@@ -61,7 +61,7 @@ const Header = () => {
               icon={<UserAddOutlined />}
               size={'large'}
               type={'link'}
-              onClick={() => navigate('/auth', { state: 'signup' })}
+              onClick={() => navigate('/auth', { state: { isSignUp: true } })}
             >
               <div className={classes.button__name}>Sign up</div>
             </Button>
