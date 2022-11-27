@@ -5,13 +5,8 @@ import { Button } from 'antd';
 
 const CreateBoardTemplate = () => {
   return (
-    <div className={classes.template}>
-      <Button
-        icon={<AppstoreAddOutlined />}
-        size={'large'}
-        type={'link'}
-        onClick={() => console.log('create board callback')}
-      />
+    <div className={classes.template} onClick={() => console.log('create board callback')}>
+      <Button icon={<AppstoreAddOutlined />} size={'large'} type={'link'} />
     </div>
   );
 };

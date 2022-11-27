@@ -31,3 +31,21 @@
   flex-direction: column;
   gap: 5px
 }
+
+@media (min-height: 550px) {
+  .list {
+    max-height: 370px;
+  }
+}
+
+@media (min-height: 700px) {
+  .list {
+    max-height: 500px;
+  }
+}
+
+@media (min-height: 800px) {
+  .list {
+    max-height: 600px;
+  }
+}

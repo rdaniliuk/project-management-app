@@ -27,7 +27,6 @@
 
 .list {
   display: flex;
-  align-items: center;
   flex-wrap: nowrap;
   gap: 20px;
   overflow: auto;

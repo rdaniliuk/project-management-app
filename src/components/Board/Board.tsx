@@ -6,6 +6,7 @@ import TaskListTemplate from 'components/TaskListTemplate/TaskListTemplate';
 import CreateBoard from 'components/modals/CreateBoard';
 import DeleteModal from 'components/modals/DeleteModal';
 import Info from 'components/modals/Info';
+import CreateTaskTemplate from 'components/CreateTaskTemplate/CreateTaskTemplate';
 
 const Board = () => {
   const boardTestData = {
@@ -40,6 +41,8 @@ const Board = () => {
       <div className={classes.list}>
         <TaskListTemplate />
         <TaskListTemplate />
+        <TaskListTemplate />
+        <CreateTaskTemplate />
       </div>
     </div>
   );

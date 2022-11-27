@@ -7,7 +7,6 @@ export const TMATE1 = [
 export const TMATE2 = [
   'Oleksandr',
   'https://cdni.iconscout.com/illustration/premium/thumb/delivery-in-rain-5402140-4518110.png',
-  'https://cdni.iconscout.com/illustration/premium/thumb/farmer-holding-umbrella-5481939-4591517.png',
   'https://github.com/Alexander-M-rss',
   '',
 ];
