@@ -1,19 +1,46 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import classes from './Main.module.css';
 import CreateBoardTemplate from 'components/CreateBoardTemplate/CreateBoardTemplate';
 import BoardTemplate from 'components/BoadrTemplate/BoardTemplate';
-import Board from 'components/Board/Board';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import Loader from 'components/Loader/Loader';
+import { getBoards, resetBoards } from 'store/boardsSlice';
+import { authErr, resetAuth } from 'store/authSlice';
+import { notification } from 'antd';
 
 const Main = () => {
-  const boardTestData = {
-    name: 'Test Name',
-    description: 'test test test  test test test',
-  };
+  const { boards, isLoading, statusCode, errMsg } = useAppSelector((state) => state.boards);
+  const { token } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+  const [notify, contextHolder] = notification.useNotification();
+
+  useEffect(() => {
+    dispatch(getBoards(token));
+  }, [dispatch, token]);
+
+  useEffect(() => {
+    if (statusCode && authErr.includes(+statusCode)) {
+      dispatch(resetAuth());
+      dispatch(resetBoards);
+      return;
+    }
+    if (errMsg) {
+      notify['error']({
+        message: 'Error',
+        description: errMsg,
+      });
+    }
+  }, [dispatch, errMsg, notify, statusCode]);
+
   return (
     <div className={classes.main}>
-      <BoardTemplate {...boardTestData} />
-      <BoardTemplate {...boardTestData} />
-      <CreateBoardTemplate />
+      {contextHolder}
+      {isLoading && <Loader />}
+      {!isLoading &&
+        boards.map(({ _id, title, description }) => (
+          <BoardTemplate key={_id} id={_id} title={title} description={description} />
+        ))}
+      {!isLoading && <CreateBoardTemplate />}
     </div>
   );
 };
