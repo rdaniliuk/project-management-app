@@ -1,9 +1,14 @@
 import React from 'react';
 import 'antd/dist/antd.css';
-import { ExclamationCircleFilled, ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Modal } from 'antd';
 
-const DeleteModal = () => {
+interface IHandlers {
+  onOk: () => void;
+  onCancel: () => void;
+}
+
+const callDeleteModal = ({ onOk, onCancel }: IHandlers) => {
   Modal.confirm({
     title: 'Confirm',
     icon: <ExclamationCircleFilled />,
@@ -11,9 +16,9 @@ const DeleteModal = () => {
     okText: 'Yes',
     okType: 'danger',
     cancelText: 'No',
-    onOk: () => console.log('ok'),
-    onCancel: () => console.log('no'),
+    onOk,
+    onCancel,
   });
 };
 
-export default DeleteModal;
+export default callDeleteModal;

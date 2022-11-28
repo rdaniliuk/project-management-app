@@ -4,15 +4,20 @@ import CreateBoardTemplate from 'components/CreateBoardTemplate/CreateBoardTempl
 import BoardTemplate from 'components/BoadrTemplate/BoardTemplate';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Loader from 'components/Loader/Loader';
-import { getBoards, resetBoards } from 'store/boardsSlice';
+import { deleteBoard, getBoards, resetBoards, clearBoardsError } from 'store/boardsSlice';
 import { authErr, resetAuth } from 'store/authSlice';
 import { notification } from 'antd';
+import { hideDeleteModal } from 'store/modalsSlice';
+import callDeleteModal from 'components/modals/DeleteModal';
 
 const Main = () => {
-  const { boards, isLoading, statusCode, errMsg } = useAppSelector((state) => state.boards);
+  const { boards, isLoading, statusCode, errMsg, isUpdateNeeded } = useAppSelector(
+    (state) => state.boards
+  );
   const { token } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const [notify, contextHolder] = notification.useNotification();
+  const { isDeleteShown, boardId } = useAppSelector((state) => state.modals);
 
   useEffect(() => {
     dispatch(getBoards(token));
@@ -29,8 +34,29 @@ const Main = () => {
         message: 'Error',
         description: errMsg,
       });
+      dispatch(clearBoardsError());
     }
   }, [dispatch, errMsg, notify, statusCode]);
+
+  useEffect(() => {
+    if (isDeleteShown) {
+      callDeleteModal({
+        onOk: () => {
+          dispatch(hideDeleteModal());
+          dispatch(deleteBoard({ token, id: boardId }));
+        },
+        onCancel: () => {
+          dispatch(hideDeleteModal());
+        },
+      });
+    }
+  }, [boardId, dispatch, isDeleteShown, token]);
+
+  useEffect(() => {
+    if (isUpdateNeeded) {
+      dispatch(getBoards(token));
+    }
+  }, [dispatch, isUpdateNeeded, token]);
 
   return (
     <div className={classes.main}>

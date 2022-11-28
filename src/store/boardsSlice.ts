@@ -14,6 +14,7 @@ export interface IBoards {
   isLoading: boolean;
   statusCode: string;
   errMsg: string;
+  isUpdateNeeded: boolean;
 }
 
 const initialBoards: IBoards = {
@@ -21,12 +22,24 @@ const initialBoards: IBoards = {
   isLoading: false,
   statusCode: '',
   errMsg: '',
+  isUpdateNeeded: false,
 };
 
 export interface IGetBoardsResp {
   boards: IBoard[];
   statusCode: string;
   errMsg: string;
+}
+
+export interface IBoardResp {
+  board: IBoard;
+  statusCode: string;
+  errMsg: string;
+}
+
+interface IBoardReq {
+  token: string;
+  id: string;
 }
 
 export const getBoards = createAsyncThunk<IGetBoardsResp, string>(
@@ -64,12 +77,57 @@ export const getBoards = createAsyncThunk<IGetBoardsResp, string>(
   }
 );
 
+export const deleteBoard = createAsyncThunk<IBoardResp, IBoardReq>(
+  'boards/deleteBoard',
+  async function ({ token, id }) {
+    const boardResp: IBoardResp = {
+      board: {
+        _id: '',
+        title: '',
+        description: '',
+        owner: '',
+        users: [],
+      },
+      statusCode: '',
+      errMsg: '',
+    };
+
+    try {
+      const resp = await fetch(`${BOARDS_URL}/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = (await resp.json()) as IBoard;
+
+      if (Array.isArray(data)) {
+        boardResp.board = data;
+      } else {
+        Object.assign(boardResp, data);
+      }
+    } catch (e: unknown) {
+      boardResp.statusCode = '1';
+      boardResp.errMsg = e instanceof Error ? e.message : 'Connection error';
+    } finally {
+      return boardResp;
+    }
+  }
+);
+
 const boardsSlice = createSlice({
   name: 'boards',
   initialState: initialBoards,
   reducers: {
     resetBoards() {
       return initialBoards;
+    },
+    clearBoardsError(boards) {
+      boards.statusCode = '';
+      boards.errMsg = '';
     },
   },
   extraReducers: (builder) => {
@@ -83,9 +141,21 @@ const boardsSlice = createSlice({
         boards.errMsg = errMsg;
         boards.statusCode = statusCode;
         boards.isLoading = false;
+        boards.isUpdateNeeded = false;
+      })
+      .addCase(deleteBoard.pending, (boards) => {
+        boards.isLoading = true;
+      })
+      .addCase(deleteBoard.fulfilled, (boards, action) => {
+        const { statusCode, errMsg } = action.payload;
+        boards.boards = boards.boards;
+        boards.errMsg = errMsg;
+        boards.statusCode = statusCode;
+        boards.isLoading = false;
+        boards.isUpdateNeeded = !errMsg;
       });
   },
 });
 
-export const { resetBoards } = boardsSlice.actions;
+export const { resetBoards, clearBoardsError } = boardsSlice.actions;
 export default boardsSlice.reducer;

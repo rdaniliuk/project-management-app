@@ -2,8 +2,21 @@ import { DeleteTwoTone, EditTwoTone } from '@ant-design/icons';
 import React from 'react';
 import classes from './BoardTemplate.module.css';
 import { Button } from 'antd';
+import { useAppDispatch } from 'store/hooks';
+import { showDeleteModal } from 'store/modalsSlice';
 
 const BoardTemplate = (props: { title: string; description: string; id: string }) => {
+  const dispatch = useAppDispatch();
+
+  const deleteBtnHandle = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    const boardId = (e.currentTarget as HTMLElement).dataset.id || '';
+
+    if (boardId) {
+      e.stopPropagation();
+      dispatch(showDeleteModal(boardId));
+    }
+  };
+
   return (
     <div
       className={classes.template}
@@ -17,7 +30,7 @@ const BoardTemplate = (props: { title: string; description: string; id: string }
         <div className={classes.board__buttons}>
           <div className={classes.board__change}>
             <Button
-              board-id={props.id}
+              data-id={props.id}
               icon={<EditTwoTone />}
               size={'large'}
               type={'link'}
@@ -26,11 +39,11 @@ const BoardTemplate = (props: { title: string; description: string; id: string }
           </div>
           <div className={classes.board__delete}>
             <Button
-              board-id={props.id}
+              data-id={props.id}
               icon={<DeleteTwoTone />}
               size={'large'}
               type={'link'}
-              onClick={() => console.log('delete board callback')}
+              onClick={deleteBtnHandle}
             />
           </div>
         </div>
