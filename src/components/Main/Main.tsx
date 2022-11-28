@@ -7,12 +7,15 @@ import Loader from 'components/Loader/Loader';
 import { getBoards, resetBoards } from 'store/boardsSlice';
 import { authErr, resetAuth } from 'store/authSlice';
 import { notification } from 'antd';
+import { hideDeleteModal } from 'store/modalsSlice';
+import callDeleteModal from 'components/modals/DeleteModal';
 
 const Main = () => {
   const { boards, isLoading, statusCode, errMsg } = useAppSelector((state) => state.boards);
   const { token } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const [notify, contextHolder] = notification.useNotification();
+  const { isDeleteShown, boardId } = useAppSelector((state) => state.modals);
 
   useEffect(() => {
     dispatch(getBoards(token));
@@ -31,6 +34,19 @@ const Main = () => {
       });
     }
   }, [dispatch, errMsg, notify, statusCode]);
+
+  useEffect(() => {
+    if (isDeleteShown) {
+      callDeleteModal({
+        onOk: () => {
+          dispatch(hideDeleteModal());
+        },
+        onCancel: () => {
+          dispatch(hideDeleteModal());
+        },
+      });
+    }
+  }, [dispatch, isDeleteShown]);
 
   return (
     <div className={classes.main}>
