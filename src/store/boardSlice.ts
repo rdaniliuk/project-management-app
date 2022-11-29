@@ -7,7 +7,7 @@ const boardId = testId;
 
 const initialBoard: IBoard = {
   isLoading: false,
-  boardId: '',
+  _id: '',
   title: '',
   description: '',
   statusCode: '',
@@ -86,7 +86,7 @@ const boardSlice = createSlice({
       .addCase(getBoardData.fulfilled, (board, action) => {
         const { title, _id, description, statusCode, errMsg } = action.payload;
         board.title = title;
-        board.boardId = _id;
+        board._id = _id;
         board.description = description;
         board.statusCode = statusCode;
         board.errMsg = errMsg;

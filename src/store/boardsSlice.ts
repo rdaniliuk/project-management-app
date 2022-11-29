@@ -3,7 +3,7 @@ import { BOARDS_URL } from '../store/apiUrls';
 
 export interface IBoard {
   isLoading: boolean;
-  boardId: string;
+  _id: string;
   title: string;
   description: string;
   statusCode: string;
@@ -93,7 +93,7 @@ export const deleteBoard = createAsyncThunk<IBoardResp, IBoardReq>(
     const boardResp: IBoardResp = {
       board: {
         isLoading: false,
-        boardId: '',
+        _id: '',
         title: '',
         description: '',
         statusCode: '',
@@ -137,7 +137,7 @@ export const createBoard = createAsyncThunk<IBoardResp, { board: INewBoard; toke
     const boardResp: IBoardResp = {
       board: {
         isLoading: false,
-        boardId: '',
+        _id: '',
         title: '',
         description: '',
         statusCode: '',

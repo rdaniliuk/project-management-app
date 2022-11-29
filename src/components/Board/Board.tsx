@@ -15,7 +15,7 @@ import { authErr, resetAuth } from 'store/authSlice';
 import Loader from 'components/Loader/Loader';
 
 const Board = () => {
-  const { title, boardId, description, statusCode, errMsg, isLoading } = useAppSelector(
+  const { title, _id, description, statusCode, errMsg, isLoading } = useAppSelector(
     (state) => state.board
   );
   const { columns, colIsLoading, colStatusCode, colErrMsg } = useAppSelector(
@@ -30,9 +30,9 @@ const Board = () => {
   }, [dispatch, token]);
 
   useEffect(() => {
-    if (!token || !boardId) return;
-    dispatch(getColumns({ token, boardId }));
-  }, [dispatch, token, boardId]);
+    if (!token || !_id) return;
+    dispatch(getColumns({ token, boardId: _id }));
+  }, [dispatch, token, _id]);
 
   useEffect(() => {
     if (statusCode && authErr.includes(+statusCode)) {
