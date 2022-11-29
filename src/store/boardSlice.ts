@@ -12,6 +12,8 @@ const initialBoard: IBoard = {
   description: '',
   statusCode: '',
   errMsg: '',
+  owner: '',
+  users: [],
 };
 
 interface ITask {
