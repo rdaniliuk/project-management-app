@@ -4,16 +4,27 @@ import CreateBoardTemplate from 'components/CreateBoardTemplate/CreateBoardTempl
 import BoardTemplate from 'components/BoadrTemplate/BoardTemplate';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Loader from 'components/Loader/Loader';
-import { getBoards, resetBoards } from 'store/boardsSlice';
+import {
+  deleteBoard,
+  getBoards,
+  resetBoards,
+  clearBoardsError,
+  createBoard,
+} from 'store/boardsSlice';
 import { authErr, resetAuth } from 'store/authSlice';
 import { notification } from 'antd';
-import Board from 'components/Board/Board';
+import { hideDeleteModal, showCreateModal } from 'store/modalsSlice';
+import callDeleteModal from 'components/modals/DeleteModal';
+import CreateModal from 'components/modals/CreateModal';
 
 const Main = () => {
-  const { boards, isLoading, statusCode, errMsg } = useAppSelector((state) => state.boards);
-  const { token } = useAppSelector((state) => state.auth);
+  const { boards, isLoading, statusCode, errMsg, isUpdateNeeded } = useAppSelector(
+    (state) => state.boards
+  );
+  const { token, id } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const [notify, contextHolder] = notification.useNotification();
+  const { isDeleteShown, boardId } = useAppSelector((state) => state.modals);
 
   useEffect(() => {
     dispatch(getBoards(token));
@@ -30,8 +41,29 @@ const Main = () => {
         message: 'Error',
         description: errMsg,
       });
+      dispatch(clearBoardsError());
     }
   }, [dispatch, errMsg, notify, statusCode]);
+
+  useEffect(() => {
+    if (isDeleteShown) {
+      callDeleteModal({
+        onOk: () => {
+          dispatch(hideDeleteModal());
+          dispatch(deleteBoard({ token, id: boardId }));
+        },
+        onCancel: () => {
+          dispatch(hideDeleteModal());
+        },
+      });
+    }
+  }, [boardId, dispatch, isDeleteShown, token]);
+
+  useEffect(() => {
+    if (isUpdateNeeded) {
+      dispatch(getBoards(token));
+    }
+  }, [dispatch, isUpdateNeeded, token]);
 
   return (
     <div className={classes.main}>
@@ -41,7 +73,29 @@ const Main = () => {
         boards.map(({ boardId, title, description }) => (
           <BoardTemplate key={boardId} id={boardId} title={title} description={description} />
         ))}
-      {!isLoading && <CreateBoardTemplate />}
+      {!isLoading && (
+        <CreateBoardTemplate
+          onClick={() => {
+            dispatch(showCreateModal());
+          }}
+        />
+      )}
+      <CreateModal
+        type="Board"
+        onCreate={({ title, description }) => {
+          dispatch(
+            createBoard({
+              token,
+              board: {
+                title,
+                description,
+                owner: id,
+                users: [],
+              },
+            })
+          );
+        }}
+      />
     </div>
   );
 };

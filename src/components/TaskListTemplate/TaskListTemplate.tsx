@@ -10,6 +10,12 @@ import {
 import { Input } from 'antd';
 import Task from 'components/TaskTemplate/Task';
 
+const TaskListTemplate = () => {
+  const boardTestData = {
+    name: 'Test Name',
+    description: 'testtest',
+  };
+
 const TaskListTemplate = (props: { title: string; id: string }) => {
   const [renameListStatus, setRenameListStatus] = useState(false);
   const [listName, setListName] = useState(props.title);
