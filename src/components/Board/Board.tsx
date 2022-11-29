@@ -3,7 +3,7 @@ import classes from './Board.module.css';
 import { Button } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import TaskListTemplate from 'components/TaskListTemplate/TaskListTemplate';
-import CreateBoard from 'components/modals/CreateBoard';
+import CreateModal from 'components/modals/CreateModal';
 import DeleteModal from 'components/modals/DeleteModal';
 import Info from 'components/modals/Info';
 import CreateTaskTemplate from 'components/CreateTaskTemplate/CreateTaskTemplate';

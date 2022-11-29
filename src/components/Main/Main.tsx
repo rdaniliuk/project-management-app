@@ -7,8 +7,9 @@ import Loader from 'components/Loader/Loader';
 import { deleteBoard, getBoards, resetBoards, clearBoardsError } from 'store/boardsSlice';
 import { authErr, resetAuth } from 'store/authSlice';
 import { notification } from 'antd';
-import { hideDeleteModal } from 'store/modalsSlice';
+import { hideDeleteModal, resetValues, showCreateModal } from 'store/modalsSlice';
 import callDeleteModal from 'components/modals/DeleteModal';
+import CreateModal from 'components/modals/CreateModal';
 
 const Main = () => {
   const { boards, isLoading, statusCode, errMsg, isUpdateNeeded } = useAppSelector(
@@ -66,7 +67,15 @@ const Main = () => {
         boards.map(({ _id, title, description }) => (
           <BoardTemplate key={_id} id={_id} title={title} description={description} />
         ))}
-      {!isLoading && <CreateBoardTemplate />}
+      {!isLoading && (
+        <CreateBoardTemplate
+          onClick={() => {
+            dispatch(resetValues());
+            dispatch(showCreateModal());
+          }}
+        />
+      )}
+      <CreateModal type="Board" />
     </div>
   );
 };

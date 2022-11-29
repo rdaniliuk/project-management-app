@@ -3,9 +3,9 @@ import React from 'react';
 import classes from './CreateBoardTemplate.module.css';
 import { Button } from 'antd';
 
-const CreateBoardTemplate = () => {
+const CreateBoardTemplate = ({ onClick }: { onClick: () => void }) => {
   return (
-    <div className={classes.template} onClick={() => console.log('create board callback')}>
+    <div className={classes.template} onClick={onClick}>
       <Button icon={<AppstoreAddOutlined />} size={'large'} type={'link'} />
     </div>
   );
