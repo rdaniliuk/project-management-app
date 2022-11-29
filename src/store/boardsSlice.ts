@@ -42,6 +42,13 @@ interface IBoardReq {
   id: string;
 }
 
+interface INewBoard {
+  title: string;
+  description: string;
+  owner: string;
+  users: string[];
+}
+
 export const getBoards = createAsyncThunk<IGetBoardsResp, string>(
   'boards/getBoards',
   async function (token: string) {
@@ -118,6 +125,48 @@ export const deleteBoard = createAsyncThunk<IBoardResp, IBoardReq>(
   }
 );
 
+export const createBoard = createAsyncThunk<IBoardResp, { board: INewBoard; token: string }>(
+  'boards/createBoard',
+  async function ({ token, board }) {
+    const boardResp: IBoardResp = {
+      board: {
+        _id: '',
+        title: '',
+        description: '',
+        owner: '',
+        users: [],
+      },
+      statusCode: '',
+      errMsg: '',
+    };
+
+    try {
+      const resp = await fetch(`${BOARDS_URL}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(board),
+      });
+
+      const data = (await resp.json()) as IBoard;
+
+      if (Array.isArray(data)) {
+        boardResp.board = data;
+      } else {
+        Object.assign(boardResp, data);
+      }
+    } catch (e: unknown) {
+      boardResp.statusCode = '1';
+      boardResp.errMsg = e instanceof Error ? e.message : 'Connection error';
+    } finally {
+      return boardResp;
+    }
+  }
+);
+
 const boardsSlice = createSlice({
   name: 'boards',
   initialState: initialBoards,
@@ -148,7 +197,16 @@ const boardsSlice = createSlice({
       })
       .addCase(deleteBoard.fulfilled, (boards, action) => {
         const { statusCode, errMsg } = action.payload;
-        boards.boards = boards.boards;
+        boards.errMsg = errMsg;
+        boards.statusCode = statusCode;
+        boards.isLoading = false;
+        boards.isUpdateNeeded = !errMsg;
+      })
+      .addCase(createBoard.pending, (boards) => {
+        boards.isLoading = true;
+      })
+      .addCase(createBoard.fulfilled, (boards, action) => {
+        const { statusCode, errMsg } = action.payload;
         boards.errMsg = errMsg;
         boards.statusCode = statusCode;
         boards.isLoading = false;
