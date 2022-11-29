@@ -3,10 +3,24 @@
   padding: 10px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   position: sticky;
   top: 0;
   z-index: 300;
   transition: 0.3s;
+}
+
+.header__logo {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header__logo img {
+  width: 2rem;
+  height: 2rem;
 }
 
 .header.sticky {

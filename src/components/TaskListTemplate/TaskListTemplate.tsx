@@ -9,17 +9,11 @@ import {
 } from '@ant-design/icons';
 import { Input } from 'antd';
 import Task from 'components/TaskTemplate/Task';
-import CreateBoard from 'components/modals/CreateBoard';
 
-const TaskListTemplate = () => {
-  const boardTestData = {
-    name: 'Test Name',
-    description: 'testtest',
-  };
-
+const TaskListTemplate = (props: { title: string; id: string }) => {
   const [renameListStatus, setRenameListStatus] = useState(false);
-  const [listName, setListName] = useState(boardTestData.name);
-  const [listNameBeforChange, setListNameBeforChange] = useState(listName);
+  const [listName, setListName] = useState(props.title);
+  const [listNameBeforeChange, setListNameBeforeChange] = useState(listName);
   return (
     <div className={classes.list}>
       <div className={classes.header}>
@@ -63,14 +57,14 @@ const TaskListTemplate = () => {
                 type={'link'}
                 onClick={() => {
                   setRenameListStatus(false);
-                  setListNameBeforChange(listName);
+                  setListNameBeforeChange(listName);
                 }}
               />
               <Button
                 icon={<CloseCircleOutlined style={{ color: '#fff' }} />}
                 type={'link'}
                 onClick={() => {
-                  setListName(listNameBeforChange);
+                  setListName(listNameBeforeChange);
                   setRenameListStatus(false);
                 }}
               />
@@ -79,16 +73,6 @@ const TaskListTemplate = () => {
         )}
       </div>
       <div className={classes.tasks}>
-        <Task />
-        <Task />
-        <Task />
-        <Task />
-        <Task />
-        <Task />
-        <Task />
-        <Task />
-        <Task />
-        <Task />
         <Task />
         <Task />
         <Task />

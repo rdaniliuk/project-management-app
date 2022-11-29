@@ -7,6 +7,7 @@ import Loader from 'components/Loader/Loader';
 import { getBoards, resetBoards } from 'store/boardsSlice';
 import { authErr, resetAuth } from 'store/authSlice';
 import { notification } from 'antd';
+import Board from 'components/Board/Board';
 
 const Main = () => {
   const { boards, isLoading, statusCode, errMsg } = useAppSelector((state) => state.boards);
@@ -37,8 +38,8 @@ const Main = () => {
       {contextHolder}
       {isLoading && <Loader />}
       {!isLoading &&
-        boards.map(({ _id, title, description }) => (
-          <BoardTemplate key={_id} id={_id} title={title} description={description} />
+        boards.map(({ boardId, title, description }) => (
+          <BoardTemplate key={boardId} id={boardId} title={title} description={description} />
         ))}
       {!isLoading && <CreateBoardTemplate />}
     </div>
