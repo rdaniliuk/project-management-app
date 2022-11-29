@@ -5,11 +5,11 @@ import {
   LayoutTwoTone,
   LoginOutlined,
   LogoutOutlined,
-  ScheduleTwoTone,
   UserAddOutlined,
   UserOutlined,
   ZhihuCircleFilled,
 } from '@ant-design/icons';
+import { LOGO_IMAGE } from 'imageLink';
 import { Button } from 'antd';
 import { useHeader } from 'components/hooks/useHeader';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
@@ -23,14 +23,16 @@ const Header = () => {
   const navigate = useNavigate();
   return (
     <div className={classes.header} ref={headerWrapper}>
-      <Button icon={<LayoutTwoTone />} size={'large'} type={'link'}></Button>
+      <div className={classes.header__logo}>
+        <img src={LOGO_IMAGE} alt="logo" />
+      </div>
       <div>
         <Button icon={<ZhihuCircleFilled />} size={'large'} type={'link'}>
           EN
         </Button>
         {isLogged ? (
           <Button
-            icon={<ScheduleTwoTone />}
+            icon={<LayoutTwoTone />}
             size={'large'}
             type={'link'}
             onClick={() => navigate('/')}

@@ -6,3 +6,5 @@ export const ABOUT_IMAGE =
 
 export const NOT_FOUND_IMAGE =
   'https://cdni.iconscout.com/illustration/premium/thumb/man-struggling-with-wind-holding-umbrella-in-rainy-4931216-4112389.png';
+
+export const LOGO_IMAGE = 'https://www.pngmart.com/files/6/Umbrella-PNG-Picture.png';

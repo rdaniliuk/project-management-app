@@ -1,12 +1,14 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { BOARDS_URL } from '../store/apiUrls';
+import { IColumn } from './boardSlice';
 
 export interface IBoard {
-  _id: string;
+  isLoading: boolean;
+  boardId: string;
   title: string;
   description: string;
-  owner: string;
-  users: string[];
+  statusCode: string;
+  errMsg: string;
 }
 
 export interface IBoards {
