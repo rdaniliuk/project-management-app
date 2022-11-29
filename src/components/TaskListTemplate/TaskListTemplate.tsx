@@ -9,7 +9,6 @@ import {
 } from '@ant-design/icons';
 import { Input } from 'antd';
 import Task from 'components/TaskTemplate/Task';
-import CreateBoard from 'components/modals/CreateBoard';
 
 const TaskListTemplate = () => {
   const boardTestData = {

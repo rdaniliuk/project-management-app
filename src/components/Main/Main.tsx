@@ -4,17 +4,24 @@ import CreateBoardTemplate from 'components/CreateBoardTemplate/CreateBoardTempl
 import BoardTemplate from 'components/BoadrTemplate/BoardTemplate';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Loader from 'components/Loader/Loader';
-import { deleteBoard, getBoards, resetBoards, clearBoardsError } from 'store/boardsSlice';
+import {
+  deleteBoard,
+  getBoards,
+  resetBoards,
+  clearBoardsError,
+  createBoard,
+} from 'store/boardsSlice';
 import { authErr, resetAuth } from 'store/authSlice';
 import { notification } from 'antd';
-import { hideDeleteModal } from 'store/modalsSlice';
+import { hideDeleteModal, showCreateModal } from 'store/modalsSlice';
 import callDeleteModal from 'components/modals/DeleteModal';
+import CreateModal from 'components/modals/CreateModal';
 
 const Main = () => {
   const { boards, isLoading, statusCode, errMsg, isUpdateNeeded } = useAppSelector(
     (state) => state.boards
   );
-  const { token } = useAppSelector((state) => state.auth);
+  const { token, id } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const [notify, contextHolder] = notification.useNotification();
   const { isDeleteShown, boardId } = useAppSelector((state) => state.modals);
@@ -66,7 +73,29 @@ const Main = () => {
         boards.map(({ _id, title, description }) => (
           <BoardTemplate key={_id} id={_id} title={title} description={description} />
         ))}
-      {!isLoading && <CreateBoardTemplate />}
+      {!isLoading && (
+        <CreateBoardTemplate
+          onClick={() => {
+            dispatch(showCreateModal());
+          }}
+        />
+      )}
+      <CreateModal
+        type="Board"
+        onCreate={({ title, description }) => {
+          dispatch(
+            createBoard({
+              token,
+              board: {
+                title,
+                description,
+                owner: id,
+                users: [],
+              },
+            })
+          );
+        }}
+      />
     </div>
   );
 };

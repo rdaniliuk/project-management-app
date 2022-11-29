@@ -1,4 +1,4 @@
-import { DeleteTwoTone, EditTwoTone } from '@ant-design/icons';
+import { DeleteTwoTone } from '@ant-design/icons';
 import React from 'react';
 import classes from './BoardTemplate.module.css';
 import { Button } from 'antd';
@@ -28,15 +28,6 @@ const BoardTemplate = (props: { title: string; description: string; id: string }
           <span>{props.title}</span>
         </div>
         <div className={classes.board__buttons}>
-          <div className={classes.board__change}>
-            <Button
-              data-id={props.id}
-              icon={<EditTwoTone />}
-              size={'large'}
-              type={'link'}
-              onClick={() => console.log('edit board callback')}
-            />
-          </div>
           <div className={classes.board__delete}>
             <Button
               data-id={props.id}
