@@ -4,7 +4,7 @@ import { Input, Modal } from 'antd';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { hideCreateModal, setDescription, setTitle } from 'store/modalsSlice';
 
-const CreateModal = ({ type }: { type: string }) => {
+const CreateModal = ({ type, onCreate: onCreateCB }: { type: string; onCreate: () => void }) => {
   const { isCreateShown, title, description } = useAppSelector((state) => state.modals);
   const dispatch = useAppDispatch();
 
@@ -13,7 +13,8 @@ const CreateModal = ({ type }: { type: string }) => {
   };
 
   const onCreate = () => {
-    hideModal();
+    dispatch(hideCreateModal());
+    onCreateCB();
   };
 
   return (
