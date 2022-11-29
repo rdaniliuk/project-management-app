@@ -3,11 +3,17 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 interface IModals {
   isDeleteShown: boolean;
   boardId: string;
+  isCreateShown: boolean;
+  title: string;
+  description: string;
 }
 
 const initialModals: IModals = {
   isDeleteShown: false,
   boardId: '',
+  isCreateShown: false,
+  title: '',
+  description: '',
 };
 
 const modalsSlice = createSlice({
@@ -25,8 +31,33 @@ const modalsSlice = createSlice({
       state.isDeleteShown = false;
       state.boardId = '';
     },
+    showCreateModal(state) {
+      state.isCreateShown = true;
+    },
+    hideCreateModal(state) {
+      state.isCreateShown = false;
+    },
+    setTitle(state, action: PayloadAction<string>) {
+      state.title = action.payload;
+    },
+    setDescription(state, action: PayloadAction<string>) {
+      state.description = action.payload;
+    },
+    resetValues(state) {
+      state.title = '';
+      state.description = '';
+    },
   },
 });
 
-export const { resetModals, showDeleteModal, hideDeleteModal } = modalsSlice.actions;
+export const {
+  resetModals,
+  showDeleteModal,
+  hideDeleteModal,
+  showCreateModal,
+  hideCreateModal,
+  setTitle,
+  setDescription,
+  resetValues,
+} = modalsSlice.actions;
 export default modalsSlice.reducer;
