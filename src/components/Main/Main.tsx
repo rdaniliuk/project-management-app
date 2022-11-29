@@ -13,7 +13,7 @@ import {
 } from 'store/boardsSlice';
 import { authErr, resetAuth } from 'store/authSlice';
 import { notification } from 'antd';
-import { hideDeleteModal, resetValues, showCreateModal } from 'store/modalsSlice';
+import { hideDeleteModal, showCreateModal } from 'store/modalsSlice';
 import callDeleteModal from 'components/modals/DeleteModal';
 import CreateModal from 'components/modals/CreateModal';
 
@@ -24,7 +24,7 @@ const Main = () => {
   const { token, id } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const [notify, contextHolder] = notification.useNotification();
-  const { isDeleteShown, boardId, title, description } = useAppSelector((state) => state.modals);
+  const { isDeleteShown, boardId } = useAppSelector((state) => state.modals);
 
   useEffect(() => {
     dispatch(getBoards(token));
@@ -76,15 +76,14 @@ const Main = () => {
       {!isLoading && (
         <CreateBoardTemplate
           onClick={() => {
-            dispatch(resetValues());
             dispatch(showCreateModal());
           }}
         />
       )}
       <CreateModal
         type="Board"
-        onCreate={() => {
-          return dispatch(
+        onCreate={({ title, description }) => {
+          dispatch(
             createBoard({
               token,
               board: {

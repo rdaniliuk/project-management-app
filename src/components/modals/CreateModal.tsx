@@ -1,20 +1,40 @@
 import React from 'react';
 import 'antd/dist/antd.css';
-import { Input, Modal } from 'antd';
+import { Form, Input, Modal } from 'antd';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { hideCreateModal, setDescription, setTitle } from 'store/modalsSlice';
+import { hideCreateModal } from 'store/modalsSlice';
 
-const CreateModal = ({ type, onCreate: onCreateCB }: { type: string; onCreate: () => void }) => {
-  const { isCreateShown, title, description } = useAppSelector((state) => state.modals);
+interface IValues {
+  title: string;
+  description: string;
+}
+
+const CreateModal = ({
+  type,
+  onCreate: onCreateCB,
+}: {
+  type: string;
+  onCreate: (values: IValues) => void;
+}) => {
+  const { isCreateShown } = useAppSelector((state) => state.modals);
   const dispatch = useAppDispatch();
+  const [form] = Form.useForm<IValues>();
 
   const hideModal = () => {
     dispatch(hideCreateModal());
   };
 
   const onCreate = () => {
-    dispatch(hideCreateModal());
-    onCreateCB();
+    form
+      .validateFields()
+      .then((values) => {
+        form.resetFields();
+        dispatch(hideCreateModal());
+        onCreateCB(values);
+      })
+      .catch(() => {
+        return;
+      });
   };
 
   return (
@@ -26,22 +46,22 @@ const CreateModal = ({ type, onCreate: onCreateCB }: { type: string; onCreate: (
       okText="Create"
       cancelText="Back"
     >
-      <Input
-        placeholder={`${type} Title`}
-        allowClear
-        value={title}
-        onChange={(e) => {
-          dispatch(setTitle(e.target.value));
-        }}
-      />
-      <Input
-        placeholder="Description"
-        allowClear
-        value={description}
-        onChange={(e) => {
-          dispatch(setDescription(e.target.value));
-        }}
-      />
+      <Form form={form} layout="vertical" name="form_in_modal">
+        <Form.Item
+          name="title"
+          label="Title"
+          rules={[{ required: true, message: 'should not be empty' }]}
+        >
+          <Input placeholder={`${type} Title`} allowClear />
+        </Form.Item>
+        <Form.Item
+          name="description"
+          label="Description"
+          rules={[{ required: true, message: 'should not be empty' }]}
+        >
+          <Input placeholder="Description" type="textarea" allowClear />
+        </Form.Item>
+      </Form>
     </Modal>
   );
 };
