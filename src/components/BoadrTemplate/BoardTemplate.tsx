@@ -15,7 +15,7 @@ const BoardTemplate = (props: { title: string; description: string; id: string }
 
     if (boardId) {
       e.stopPropagation();
-      dispatch(showDeleteModal(boardId));
+      dispatch(showDeleteModal({ id: boardId, type: 'board' }));
     }
   };
 

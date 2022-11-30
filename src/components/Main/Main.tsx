@@ -24,7 +24,7 @@ const Main = () => {
   const { token, id } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const [notify, contextHolder] = notification.useNotification();
-  const { isDeleteShown, boardId } = useAppSelector((state) => state.modals);
+  const { isDeleteShown, id: boardId } = useAppSelector((state) => state.modals);
 
   useEffect(() => {
     dispatch(getBoards(token));
