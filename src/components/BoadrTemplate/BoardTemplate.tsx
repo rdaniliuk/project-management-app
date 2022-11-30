@@ -4,16 +4,18 @@ import classes from './BoardTemplate.module.css';
 import { Button } from 'antd';
 import { useAppDispatch } from 'store/hooks';
 import { showDeleteModal } from 'store/modalsSlice';
+import { useNavigate } from 'react-router-dom';
 
 const BoardTemplate = (props: { title: string; description: string; id: string }) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const deleteBtnHandle = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     const boardId = (e.currentTarget as HTMLElement).dataset.id || '';
 
     if (boardId) {
       e.stopPropagation();
-      dispatch(showDeleteModal(boardId));
+      dispatch(showDeleteModal({ id: boardId, type: 'board' }));
     }
   };
 
@@ -21,7 +23,7 @@ const BoardTemplate = (props: { title: string; description: string; id: string }
     <div
       className={classes.template}
       id={props.id}
-      onClick={() => console.log('open board callback')}
+      onClick={() => navigate('/board', { state: { id: props.id } })}
     >
       <div className={classes.board__header}>
         <div className={classes.board__name}>

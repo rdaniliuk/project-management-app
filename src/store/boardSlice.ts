@@ -1,11 +1,14 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { BOARDS_URL } from '../store/apiUrls';
-import { IBoard } from './boardsSlice';
+import { IBoard, IBoardReq } from './boardsSlice';
 
-const testId = '6384ba3bc86f4cb189a36932';
-const boardId = testId;
+interface IBoardState extends IBoard {
+  isLoading: boolean;
+  statusCode: string;
+  errMsg: string;
+}
 
-const initialBoard: IBoard = {
+const initialBoard: IBoardState = {
   isLoading: false,
   _id: '',
   title: '',
@@ -37,9 +40,9 @@ interface IGetBoardResp {
   errMsg: string;
 }
 
-export const getBoardData = createAsyncThunk<IGetBoardResp, string>(
+export const getBoardData = createAsyncThunk<IGetBoardResp, IBoardReq>(
   'board/getBoardData',
-  async function (token: string) {
+  async function ({ token, id }) {
     const getBoardResp: IGetBoardResp = {
       title: '',
       _id: '',
@@ -50,7 +53,7 @@ export const getBoardData = createAsyncThunk<IGetBoardResp, string>(
     };
 
     try {
-      const response = await fetch(`${BOARDS_URL}/${boardId}`, {
+      const response = await fetch(`${BOARDS_URL}/${id}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,

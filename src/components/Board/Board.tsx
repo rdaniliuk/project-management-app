@@ -13,6 +13,7 @@ import { getColumns, resetColumns } from 'store/columnsSlice';
 import { notification } from 'antd';
 import { authErr, resetAuth } from 'store/authSlice';
 import Loader from 'components/Loader/Loader';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Board = () => {
   const { title, _id, description, statusCode, errMsg, isLoading } = useAppSelector(
@@ -24,10 +25,19 @@ const Board = () => {
   const { token } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const [notify, contextHolder] = notification.useNotification();
+  const { state } = useLocation();
+  const boardId: string = state?.id || '';
+  const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(getBoardData(token));
-  }, [dispatch, token]);
+    if (!boardId) {
+      navigate('/');
+    }
+  }, [boardId, navigate]);
+
+  useEffect(() => {
+    dispatch(getBoardData({ token, id: boardId }));
+  }, [boardId, dispatch, token]);
 
   useEffect(() => {
     if (!token || !_id) return;
