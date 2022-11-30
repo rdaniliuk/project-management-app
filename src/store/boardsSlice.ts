@@ -40,7 +40,7 @@ export interface IBoardResp {
   errMsg: string;
 }
 
-interface IBoardReq {
+export interface IBoardReq {
   token: string;
   id: string;
 }
