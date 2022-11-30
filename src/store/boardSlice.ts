@@ -2,7 +2,13 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { BOARDS_URL } from '../store/apiUrls';
 import { IBoard, IBoardReq } from './boardsSlice';
 
-const initialBoard: IBoard = {
+interface IBoardState extends IBoard {
+  isLoading: boolean;
+  statusCode: string;
+  errMsg: string;
+}
+
+const initialBoard: IBoardState = {
   isLoading: false,
   _id: '',
   title: '',
