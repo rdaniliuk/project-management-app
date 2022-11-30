@@ -2,12 +2,16 @@ import React from 'react';
 import classes from './Task.module.css';
 import { Button } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { showDeleteModal } from 'store/modalsSlice';
+import { useAppDispatch } from 'store/hooks';
 
 const Task = () => {
   const testTaskData = {
     name: 'test task name',
     description: 'test description okoko okokok okok',
   };
+  const dispatch = useAppDispatch();
+
   return (
     <div className={classes.task}>
       <div onClick={() => console.log('task info callback')}>
@@ -25,7 +29,7 @@ const Task = () => {
           <Button
             icon={<DeleteOutlined />}
             type={'text'}
-            onClick={() => console.log('delete task callback')}
+            onClick={() => dispatch(showDeleteModal({ id: '', type: 'task' }))}
           />
         </div>
       </div>

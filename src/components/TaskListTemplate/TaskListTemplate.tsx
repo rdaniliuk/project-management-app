@@ -9,11 +9,15 @@ import {
 } from '@ant-design/icons';
 import { Input } from 'antd';
 import Task from 'components/TaskTemplate/Task';
+import { showDeleteModal } from 'store/modalsSlice';
+import { useAppDispatch } from 'store/hooks';
 
 const TaskListTemplate = (props: { title: string; id: string }) => {
   const [renameListStatus, setRenameListStatus] = useState(false);
   const [listName, setListName] = useState(props.title);
   const [listNameBeforeChange, setListNameBeforeChange] = useState(listName);
+  const dispatch = useAppDispatch();
+
   return (
     <div className={classes.list}>
       <div className={classes.header}>
@@ -36,7 +40,7 @@ const TaskListTemplate = (props: { title: string; id: string }) => {
               <Button
                 icon={<DeleteFilled style={{ color: '#fff' }} />}
                 type={'link'}
-                onClick={() => console.log('delete list callback')}
+                onClick={() => dispatch(showDeleteModal({ id: props.id, type: 'column' }))}
               />
             </div>
           </>
