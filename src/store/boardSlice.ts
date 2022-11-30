@@ -1,15 +1,17 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { BOARDS_URL } from '../store/apiUrls';
-import { IBoard, IBoardReq } from './boardsSlice';
+import { IBoard, IBoardReq, IBoardResp } from './boardsSlice';
 
 interface IBoardState extends IBoard {
   isLoading: boolean;
+  isDeleted: boolean;
   statusCode: string;
   errMsg: string;
 }
 
 const initialBoard: IBoardState = {
   isLoading: false,
+  isDeleted: false,
   _id: '',
   title: '',
   description: '',
@@ -73,6 +75,47 @@ export const getBoardData = createAsyncThunk<IGetBoardResp, IBoardReq>(
   }
 );
 
+export const deleteBoard = createAsyncThunk<IBoardResp, IBoardReq>(
+  'board/deleteBoard',
+  async function ({ token, id }) {
+    const boardResp: IBoardResp = {
+      board: {
+        _id: '',
+        title: '',
+        description: '',
+        owner: '',
+        users: [],
+      },
+      statusCode: '',
+      errMsg: '',
+    };
+
+    try {
+      const resp = await fetch(`${BOARDS_URL}/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = (await resp.json()) as IBoard;
+
+      if (Array.isArray(data)) {
+        boardResp.board = data;
+      } else {
+        Object.assign(boardResp, data);
+      }
+    } catch (e: unknown) {
+      boardResp.statusCode = '1';
+      boardResp.errMsg = e instanceof Error ? e.message : 'Connection error';
+    } finally {
+      return boardResp;
+    }
+  }
+);
+
 const boardSlice = createSlice({
   name: 'board',
   initialState: initialBoard,
@@ -94,6 +137,16 @@ const boardSlice = createSlice({
         board.statusCode = statusCode;
         board.errMsg = errMsg;
         board.isLoading = false;
+      })
+      .addCase(deleteBoard.pending, (boards) => {
+        boards.isLoading = true;
+      })
+      .addCase(deleteBoard.fulfilled, (board, action) => {
+        const { statusCode, errMsg } = action.payload;
+        board.errMsg = errMsg;
+        board.statusCode = statusCode;
+        board.isLoading = false;
+        board.isDeleted = !errMsg;
       });
   },
 });

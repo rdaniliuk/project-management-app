@@ -8,15 +8,17 @@ import DeleteModal from 'components/modals/DeleteModal';
 import Info from 'components/modals/Info';
 import CreateTaskTemplate from 'components/CreateTaskTemplate/CreateTaskTemplate';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { getBoardData, resetBoard } from 'store/boardSlice';
+import { deleteBoard, getBoardData, resetBoard } from 'store/boardSlice';
 import { getColumns, resetColumns } from 'store/columnsSlice';
 import { notification } from 'antd';
 import { authErr, resetAuth } from 'store/authSlice';
 import Loader from 'components/Loader/Loader';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { hideDeleteModal, showDeleteModal } from 'store/modalsSlice';
+import callDeleteModal from 'components/modals/DeleteModal';
 
 const Board = () => {
-  const { title, _id, description, statusCode, errMsg, isLoading } = useAppSelector(
+  const { title, _id, description, statusCode, errMsg, isLoading, isDeleted } = useAppSelector(
     (state) => state.board
   );
   const { columns, colIsLoading, colStatusCode, colErrMsg } = useAppSelector(
@@ -28,6 +30,7 @@ const Board = () => {
   const { state } = useLocation();
   const boardId: string = state?.id || '';
   const navigate = useNavigate();
+  const { isDeleteShown, type } = useAppSelector((state) => state.modals);
 
   useEffect(() => {
     if (!boardId) {
@@ -72,6 +75,36 @@ const Board = () => {
     }
   }, [dispatch, colErrMsg, notify, colStatusCode]);
 
+  useEffect(() => {
+    if (isDeleteShown) {
+      callDeleteModal({
+        onOk: () => {
+          dispatch(hideDeleteModal());
+          switch (type) {
+            case 'board':
+              dispatch(deleteBoard({ token, id: boardId }));
+              break;
+            case 'column':
+              console.log('delete column action');
+              break;
+            case 'task':
+              console.log('delete task action');
+          }
+        },
+        onCancel: () => {
+          dispatch(hideDeleteModal());
+        },
+      });
+    }
+  }, [boardId, dispatch, isDeleteShown, token, type]);
+
+  useEffect(() => {
+    if (isDeleted) {
+      dispatch(resetBoard());
+      navigate('/');
+    }
+  }, [dispatch, isDeleted, navigate]);
+
   return (
     <div className={classes.board}>
       {contextHolder}
@@ -93,7 +126,7 @@ const Board = () => {
             <Button
               icon={<DeleteOutlined />}
               type={'primary'}
-              onClick={() => console.log('delete board callback')}
+              onClick={() => dispatch(showDeleteModal({ id: boardId, type: 'board' }))}
             />
           </div>
         </div>
