@@ -1,14 +1,15 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { BOARDS_URL } from '../store/apiUrls';
-import { IColumn } from './boardSlice';
 
 export interface IBoard {
   isLoading: boolean;
-  boardId: string;
+  _id: string;
   title: string;
   description: string;
   statusCode: string;
   errMsg: string;
+  owner: string;
+  users: string[];
 }
 
 export interface IBoards {
@@ -91,9 +92,12 @@ export const deleteBoard = createAsyncThunk<IBoardResp, IBoardReq>(
   async function ({ token, id }) {
     const boardResp: IBoardResp = {
       board: {
+        isLoading: false,
         _id: '',
         title: '',
         description: '',
+        statusCode: '',
+        errMsg: '',
         owner: '',
         users: [],
       },
@@ -132,9 +136,12 @@ export const createBoard = createAsyncThunk<IBoardResp, { board: INewBoard; toke
   async function ({ token, board }) {
     const boardResp: IBoardResp = {
       board: {
+        isLoading: false,
         _id: '',
         title: '',
         description: '',
+        statusCode: '',
+        errMsg: '',
         owner: '',
         users: [],
       },
