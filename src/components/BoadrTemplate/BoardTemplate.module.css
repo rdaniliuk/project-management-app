@@ -6,6 +6,10 @@
   background-color: #FFCD32;
 }
 
+.template:hover {
+  cursor: pointer;
+}
+
 .board__header {
   display: flex;
   justify-content: space-between;
