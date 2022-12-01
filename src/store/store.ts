@@ -5,6 +5,7 @@ import modalsSlice from './modalsSlice';
 import usersReducer from './usersSlice';
 import boardReducer from './boardSlice';
 import columnsReducer from './columnsSlice';
+import userSlice from './userSlice';
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     board: boardReducer,
     columns: columnsReducer,
     modals: modalsSlice,
+    user: userSlice,
   },
 });
 
