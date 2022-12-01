@@ -13,6 +13,7 @@ interface IColumns {
   colIsLoading: boolean;
   colStatusCode: string;
   colErrMsg: string;
+  isUpdateNeeded: boolean;
 }
 
 const initialColumns: IColumns = {
@@ -20,12 +21,25 @@ const initialColumns: IColumns = {
   colIsLoading: false,
   colStatusCode: '',
   colErrMsg: '',
+  isUpdateNeeded: false,
 };
 
 interface IGetColumnsResp {
   columns: IColumn[];
   statusCode: string;
   errMsg: string;
+}
+
+export interface IColumnResp {
+  column: IColumn;
+  statusCode: string;
+  errMsg: string;
+}
+
+export interface IColumnReq {
+  token: string;
+  id: string;
+  boardId: string;
 }
 
 export const getColumns = createAsyncThunk<IGetColumnsResp, { token: string; boardId: string }>(
@@ -63,6 +77,40 @@ export const getColumns = createAsyncThunk<IGetColumnsResp, { token: string; boa
   }
 );
 
+export const deleteColumn = createAsyncThunk<IColumnResp, IColumnReq>(
+  'columns/deleteColumn',
+  async function ({ token, id, boardId }) {
+    const columnResp: IColumnResp = {
+      column: {
+        _id: '',
+        title: '',
+        order: 0,
+        boardId: '',
+      },
+      statusCode: '',
+      errMsg: '',
+    };
+
+    try {
+      const resp = await fetch(`${BOARDS_URL}/${boardId}/columns/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = (await resp.json()) as IColumn;
+      Object.assign(columnResp, data);
+    } catch (e: unknown) {
+      columnResp.statusCode = '1';
+      columnResp.errMsg = e instanceof Error ? e.message : 'Connection error';
+    } finally {
+      return columnResp;
+    }
+  }
+);
+
 const columnsSlice = createSlice({
   name: 'columns',
   initialState: initialColumns,
@@ -82,6 +130,16 @@ const columnsSlice = createSlice({
         columns.colErrMsg = errMsg;
         columns.colStatusCode = statusCode;
         columns.colIsLoading = false;
+      })
+      .addCase(deleteColumn.pending, (columns) => {
+        columns.colIsLoading = true;
+      })
+      .addCase(deleteColumn.fulfilled, (columns, action) => {
+        const { statusCode, errMsg } = action.payload;
+        columns.colErrMsg = errMsg;
+        columns.colStatusCode = statusCode;
+        columns.colIsLoading = false;
+        columns.isUpdateNeeded = !errMsg;
       });
   },
 });

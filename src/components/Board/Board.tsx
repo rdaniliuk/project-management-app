@@ -9,7 +9,7 @@ import Info from 'components/modals/Info';
 import CreateTaskTemplate from 'components/CreateTaskTemplate/CreateTaskTemplate';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { deleteBoard, getBoardData, resetBoard } from 'store/boardSlice';
-import { getColumns, resetColumns } from 'store/columnsSlice';
+import { getColumns, resetColumns, deleteColumn } from 'store/columnsSlice';
 import { notification } from 'antd';
 import { authErr, resetAuth } from 'store/authSlice';
 import Loader from 'components/Loader/Loader';
@@ -21,7 +21,7 @@ const Board = () => {
   const { title, _id, description, statusCode, errMsg, isLoading, isDeleted } = useAppSelector(
     (state) => state.board
   );
-  const { columns, colIsLoading, colStatusCode, colErrMsg } = useAppSelector(
+  const { columns, colIsLoading, colStatusCode, colErrMsg, isUpdateNeeded } = useAppSelector(
     (state) => state.columns
   );
   const { token } = useAppSelector((state) => state.auth);
@@ -30,7 +30,7 @@ const Board = () => {
   const { state } = useLocation();
   const boardId: string = state?.id || '';
   const navigate = useNavigate();
-  const { isDeleteShown, type } = useAppSelector((state) => state.modals);
+  const { isDeleteShown, type, id: colId } = useAppSelector((state) => state.modals);
 
   useEffect(() => {
     if (!boardId) {
@@ -45,7 +45,8 @@ const Board = () => {
   useEffect(() => {
     if (!token || !_id) return;
     dispatch(getColumns({ token, boardId: _id }));
-  }, [dispatch, token, _id]);
+    return;
+  }, [_id, dispatch, token, isUpdateNeeded]);
 
   useEffect(() => {
     if (statusCode && authErr.includes(+statusCode)) {
@@ -85,7 +86,13 @@ const Board = () => {
               dispatch(deleteBoard({ token, id: boardId }));
               break;
             case 'column':
-              console.log('delete column action');
+              dispatch(
+                deleteColumn({
+                  token,
+                  id: colId,
+                  boardId: boardId,
+                })
+              );
               break;
             case 'task':
               console.log('delete task action');
@@ -96,7 +103,7 @@ const Board = () => {
         },
       });
     }
-  }, [boardId, dispatch, isDeleteShown, token, type]);
+  }, [colId, boardId, dispatch, isDeleteShown, token, type]);
 
   useEffect(() => {
     if (isDeleted) {
@@ -105,41 +112,52 @@ const Board = () => {
     }
   }, [dispatch, isDeleted, navigate]);
 
+  useEffect(() => {
+    if (isUpdateNeeded) {
+      dispatch(resetColumns());
+    }
+  }, [dispatch, isUpdateNeeded, navigate]);
+
   return (
     <div className={classes.board}>
       {contextHolder}
-      {isLoading ? <Loader /> : null}
-      <div className={classes.header}>
-        <div className={classes.info}>
-          <div className={classes.name}>{title}</div>
-          <div className={classes.description}>{description}</div>
-        </div>
-        <div className={classes.buttons}>
-          <div className={classes.edit}>
-            <Button
-              icon={<EditOutlined />}
-              type={'primary'}
-              onClick={() => console.log('edit board callback')}
-            />
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <div className={classes.header}>
+            <div className={classes.info}>
+              <div className={classes.name}>{title}</div>
+              <div className={classes.description}>{description}</div>
+            </div>
+            <div className={classes.buttons}>
+              <div className={classes.edit}>
+                <Button
+                  icon={<EditOutlined />}
+                  type={'primary'}
+                  onClick={() => console.log('edit board callback')}
+                />
+              </div>
+              <div className={classes.delete}>
+                <Button
+                  icon={<DeleteOutlined />}
+                  type={'primary'}
+                  onClick={() => dispatch(showDeleteModal({ id: boardId, type: 'board' }))}
+                />
+              </div>
+            </div>
           </div>
-          <div className={classes.delete}>
-            <Button
-              icon={<DeleteOutlined />}
-              type={'primary'}
-              onClick={() => dispatch(showDeleteModal({ id: boardId, type: 'board' }))}
-            />
+          <hr />
+          <div className={classes.list}>
+            {!colIsLoading ? (
+              columns.map(({ _id, title }) => <TaskListTemplate key={_id} title={title} id={_id} />)
+            ) : (
+              <Loader />
+            )}
+            {!colIsLoading ? <CreateTaskTemplate /> : null}
           </div>
-        </div>
-      </div>
-      <hr />
-      <div className={classes.list}>
-        {contextHolder}
-        {colIsLoading || isLoading ? <Loader /> : null}
-        {!colIsLoading
-          ? columns.map(({ _id, title }) => <TaskListTemplate key={_id} title={title} id={_id} />)
-          : null}
-        {!colIsLoading && !isLoading ? <CreateTaskTemplate /> : null}
-      </div>
+        </>
+      )}
     </div>
   );
 };
