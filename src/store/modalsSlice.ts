@@ -5,6 +5,7 @@ interface IModals {
   id: string;
   type: string;
   isCreateShown: boolean;
+  isUserProfileShown: boolean;
 }
 
 const initialModals: IModals = {
@@ -12,6 +13,7 @@ const initialModals: IModals = {
   id: '',
   type: '',
   isCreateShown: false,
+  isUserProfileShown: false,
 };
 
 const modalsSlice = createSlice({
@@ -37,9 +39,22 @@ const modalsSlice = createSlice({
     hideCreateModal(state) {
       state.isCreateShown = false;
     },
+    showUserProfileModal(state) {
+      state.isUserProfileShown = true;
+    },
+    hideUserProfileModal(state) {
+      state.isUserProfileShown = false;
+    },
   },
 });
 
-export const { resetModals, showDeleteModal, hideDeleteModal, showCreateModal, hideCreateModal } =
-  modalsSlice.actions;
+export const {
+  resetModals,
+  showDeleteModal,
+  hideDeleteModal,
+  showCreateModal,
+  hideCreateModal,
+  showUserProfileModal,
+  hideUserProfileModal,
+} = modalsSlice.actions;
 export default modalsSlice.reducer;
