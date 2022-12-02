@@ -3,9 +3,9 @@ import React from 'react';
 import classes from './CreateTaskTemplate.module.css';
 import { Button } from 'antd';
 
-const CreateTaskTemplate = () => {
+const CreateTaskTemplate = ({ onClick }: { onClick: () => void }) => {
   return (
-    <div className={classes.template} onClick={() => console.log('create task list callback')}>
+    <div className={classes.template} onClick={onClick}>
       <Button
         icon={<AppstoreAddOutlined style={{ color: '#5450ff' }} />}
         size={'large'}

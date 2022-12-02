@@ -4,17 +4,15 @@ import { Button } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import TaskListTemplate from 'components/TaskListTemplate/TaskListTemplate';
 import CreateModal from 'components/modals/CreateModal';
-import DeleteModal from 'components/modals/DeleteModal';
-import Info from 'components/modals/Info';
 import CreateTaskTemplate from 'components/CreateTaskTemplate/CreateTaskTemplate';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { deleteBoard, getBoardData, resetBoard } from 'store/boardSlice';
-import { getColumns, resetColumns, deleteColumn } from 'store/columnsSlice';
+import { getColumns, resetColumns, deleteColumn, createColumn } from 'store/columnsSlice';
 import { notification } from 'antd';
 import { authErr, resetAuth } from 'store/authSlice';
 import Loader from 'components/Loader/Loader';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { hideDeleteModal, showDeleteModal } from 'store/modalsSlice';
+import { hideDeleteModal, showCreateModal, showDeleteModal } from 'store/modalsSlice';
 import callDeleteModal from 'components/modals/DeleteModal';
 
 const Board = () => {
@@ -154,8 +152,29 @@ const Board = () => {
             ) : (
               <Loader />
             )}
-            {!colIsLoading ? <CreateTaskTemplate /> : null}
+            {!colIsLoading ? (
+              <CreateTaskTemplate
+                onClick={() => {
+                  dispatch(showCreateModal());
+                }}
+              />
+            ) : null}
           </div>
+          <CreateModal
+            type="Column"
+            onCreate={({ title }) => {
+              dispatch(
+                createColumn({
+                  token,
+                  column: {
+                    title,
+                    order: 1,
+                  },
+                  boardId: _id,
+                })
+              );
+            }}
+          />
         </>
       )}
     </div>
