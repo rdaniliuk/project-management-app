@@ -54,13 +54,15 @@ const CreateModal = ({
         >
           <Input placeholder={`${type} Title`} allowClear />
         </Form.Item>
-        <Form.Item
-          name="description"
-          label="Description"
-          rules={[{ required: true, message: 'should not be empty' }]}
-        >
-          <Input placeholder="Description" type="textarea" allowClear />
-        </Form.Item>
+        {type !== 'Column' ? (
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[{ required: true, message: 'should not be empty' }]}
+          >
+            <Input placeholder="Description" type="textarea" allowClear />
+          </Form.Item>
+        ) : null}
       </Form>
     </Modal>
   );
