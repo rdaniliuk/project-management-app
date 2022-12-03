@@ -210,16 +210,6 @@ const columnsSlice = createSlice({
         columns.colStatusCode = statusCode;
         columns.colIsLoading = false;
         columns.isUpdateNeeded = !errMsg;
-      })
-      .addCase(updateColumn.pending, (columns) => {
-        columns.colIsLoading = true;
-      })
-      .addCase(updateColumn.fulfilled, (columns, action) => {
-        const { statusCode, errMsg } = action.payload;
-        columns.colErrMsg = errMsg;
-        columns.colStatusCode = statusCode;
-        columns.colIsLoading = false;
-        columns.isUpdateNeeded = !errMsg;
       });
   },
 });
