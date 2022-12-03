@@ -65,6 +65,10 @@ const userSlice = createSlice({
     resetUser() {
       return initialUserState;
     },
+    clearUserError(user) {
+      user.statusCode = '';
+      user.errMsg = '';
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -79,5 +83,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { resetUser } = userSlice.actions;
+export const { resetUser, clearUserError } = userSlice.actions;
 export default userSlice.reducer;
