@@ -141,6 +141,36 @@ export const createColumn = createAsyncThunk<
   }
 });
 
+export const updateColumn = createAsyncThunk<
+  IColumnResp,
+  { id: string; token: string; boardId: string; newTitle: string }
+>('column/updateColumn', async function ({ token, id, boardId, newTitle }) {
+  const columnResp = initialColumnResp;
+
+  try {
+    const resp = await fetch(`${BOARDS_URL}/${boardId}/columns/${id}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: newTitle,
+        order: 0,
+      }),
+    });
+
+    const data = (await resp.json()) as IColumn;
+    Object.assign(columnResp, data);
+  } catch (e: unknown) {
+    columnResp.statusCode = '1';
+    columnResp.errMsg = e instanceof Error ? e.message : 'Connection error';
+  } finally {
+    return columnResp;
+  }
+});
+
 const columnsSlice = createSlice({
   name: 'columns',
   initialState: initialColumns,
@@ -175,6 +205,16 @@ const columnsSlice = createSlice({
         columns.colIsLoading = true;
       })
       .addCase(createColumn.fulfilled, (columns, action) => {
+        const { statusCode, errMsg } = action.payload;
+        columns.colErrMsg = errMsg;
+        columns.colStatusCode = statusCode;
+        columns.colIsLoading = false;
+        columns.isUpdateNeeded = !errMsg;
+      })
+      .addCase(updateColumn.pending, (columns) => {
+        columns.colIsLoading = true;
+      })
+      .addCase(updateColumn.fulfilled, (columns, action) => {
         const { statusCode, errMsg } = action.payload;
         columns.colErrMsg = errMsg;
         columns.colStatusCode = statusCode;

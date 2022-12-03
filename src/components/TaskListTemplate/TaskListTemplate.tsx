@@ -11,8 +11,9 @@ import { Input } from 'antd';
 import Task from 'components/TaskTemplate/Task';
 import { showDeleteModal } from 'store/modalsSlice';
 import { useAppDispatch } from 'store/hooks';
+import { updateColumn } from 'store/columnsSlice';
 
-const TaskListTemplate = (props: { title: string; id: string }) => {
+const TaskListTemplate = (props: { title: string; id: string; token: string; boardId: string }) => {
   const [renameListStatus, setRenameListStatus] = useState(false);
   const [listName, setListName] = useState(props.title);
   const [listNameBeforeChange, setListNameBeforeChange] = useState(listName);
@@ -62,6 +63,14 @@ const TaskListTemplate = (props: { title: string; id: string }) => {
                 onClick={() => {
                   setRenameListStatus(false);
                   setListNameBeforeChange(listName);
+                  dispatch(
+                    updateColumn({
+                      id: props.id,
+                      token: props.token,
+                      boardId: props.boardId,
+                      newTitle: listName,
+                    })
+                  );
                 }}
               />
               <Button

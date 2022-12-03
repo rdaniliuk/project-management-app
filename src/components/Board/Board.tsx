@@ -148,7 +148,15 @@ const Board = () => {
           <hr />
           <div className={classes.list}>
             {!colIsLoading ? (
-              columns.map(({ _id, title }) => <TaskListTemplate key={_id} title={title} id={_id} />)
+              columns.map(({ _id, title }) => (
+                <TaskListTemplate
+                  key={_id}
+                  title={title}
+                  id={_id}
+                  token={token}
+                  boardId={boardId}
+                />
+              ))
             ) : (
               <Loader />
             )}
