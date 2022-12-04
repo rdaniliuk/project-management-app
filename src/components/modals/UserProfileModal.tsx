@@ -3,7 +3,14 @@ import 'antd/dist/antd.css';
 import { Button, Form, Input, Modal } from 'antd';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { hideUserProfileModal } from 'store/modalsSlice';
-import { clearUserError, getUser, putUser, resetUser } from 'store/userSlice';
+import {
+  clearIsSuccessful,
+  clearUserError,
+  deleteUser,
+  getUser,
+  putUser,
+  resetUser,
+} from 'store/userSlice';
 import { notification } from 'antd';
 import Loader from 'components/Loader/Loader';
 import { authErr, resetAuth } from 'store/authSlice';
@@ -17,7 +24,9 @@ interface IValues {
 const UserProfileModal = () => {
   const { isUserProfileShown } = useAppSelector((state) => state.modals);
   const { id, token } = useAppSelector((state) => state.auth);
-  const { name, login, statusCode, errMsg, isLoading } = useAppSelector((state) => state.user);
+  const { name, login, statusCode, errMsg, isLoading, isSuccessful, isDeleted } = useAppSelector(
+    (state) => state.user
+  );
   const dispatch = useAppDispatch();
   const [notify, contextHolder] = notification.useNotification();
   const [form] = Form.useForm<IValues>();
@@ -58,7 +67,6 @@ const UserProfileModal = () => {
       .validateFields()
       .then((values) => {
         form.resetFields();
-        dispatch(hideUserProfileModal());
         dispatch(putUser({ id, token, user: values }));
       })
       .catch(() => {
@@ -66,12 +74,30 @@ const UserProfileModal = () => {
       });
   };
 
-  const handleDelete = () => {};
+  useEffect(() => {
+    if (isSuccessful) {
+      hideModal();
+      dispatch(clearIsSuccessful());
+    }
+  });
+
+  const handleDelete = () => {
+    dispatch(deleteUser({ id, token }));
+  };
+
+  useEffect(() => {
+    if (isDeleted) {
+      hideModal();
+      dispatch(resetAuth());
+      dispatch(resetUser());
+    }
+  });
 
   return (
     <>
       {contextHolder}
       <Modal
+        forceRender
         title={`User profile`}
         open={isUserProfileShown}
         footer={[
@@ -114,7 +140,12 @@ const UserProfileModal = () => {
                 { pattern: /^[0-9a-zA-Z]+$/, message: 'letters and numbers only!' },
               ]}
             >
-              <Input type="password" placeholder="Password" allowClear />
+              <Input
+                type="password"
+                placeholder="Password"
+                autoComplete="current-password"
+                allowClear
+              />
             </Form.Item>
             <Form.Item
               name="confirm"
@@ -132,7 +163,12 @@ const UserProfileModal = () => {
                 }),
               ]}
             >
-              <Input type="password" placeholder="Confirm password" allowClear />
+              <Input
+                type="password"
+                placeholder="Confirm password"
+                autoComplete="new-password"
+                allowClear
+              />
             </Form.Item>
           </Form>
         )}

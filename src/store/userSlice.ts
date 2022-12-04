@@ -4,6 +4,8 @@ import { IUser } from './usersSlice';
 
 interface IUserState extends IUserResp {
   isLoading: boolean;
+  isSuccessful: boolean;
+  isDeleted: boolean;
 }
 
 const initialUserState: IUserState = {
@@ -13,6 +15,8 @@ const initialUserState: IUserState = {
   statusCode: '',
   errMsg: '',
   isLoading: false,
+  isSuccessful: false,
+  isDeleted: false,
 };
 
 export interface IUserResp extends IUser {
@@ -96,6 +100,39 @@ export const putUser = createAsyncThunk<IUserResp, IPutUserReq>(
   }
 );
 
+export const deleteUser = createAsyncThunk<IUserResp, IUserReq>(
+  'user/deleteUser',
+  async function ({ token, id }) {
+    const userResp: IUserResp = {
+      _id: '',
+      name: '',
+      login: '',
+      statusCode: '',
+      errMsg: '',
+    };
+
+    try {
+      const resp = await fetch(`${USERS_URL}/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = (await resp.json()) as IUserResp;
+
+      Object.assign(userResp, data);
+    } catch (e: unknown) {
+      userResp.statusCode = '1';
+      userResp.errMsg = e instanceof Error ? e.message : 'Connection error';
+    } finally {
+      return userResp;
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState: initialUserState,
@@ -107,6 +144,9 @@ const userSlice = createSlice({
       user.statusCode = '';
       user.errMsg = '';
     },
+    clearIsSuccessful(user) {
+      user.isSuccessful = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -117,9 +157,27 @@ const userSlice = createSlice({
         const resp = action.payload;
         Object.assign(user, resp);
         user.isLoading = false;
+      })
+      .addCase(putUser.pending, (users) => {
+        users.isLoading = true;
+      })
+      .addCase(putUser.fulfilled, (user, action) => {
+        const resp = action.payload;
+        Object.assign(user, resp);
+        user.isLoading = false;
+        user.isSuccessful = !resp.statusCode;
+      })
+      .addCase(deleteUser.pending, (users) => {
+        users.isLoading = true;
+      })
+      .addCase(deleteUser.fulfilled, (user, action) => {
+        const resp = action.payload;
+        Object.assign(user, resp);
+        user.isLoading = false;
+        user.isDeleted = !resp.statusCode;
       });
   },
 });
 
-export const { resetUser, clearUserError } = userSlice.actions;
+export const { resetUser, clearUserError, clearIsSuccessful } = userSlice.actions;
 export default userSlice.reducer;
