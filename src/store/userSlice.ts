@@ -25,6 +25,10 @@ export interface IUserReq {
   id: string;
 }
 
+export interface IPutUserReq extends IUserReq {
+  user: Omit<IUser, '_id'>;
+}
+
 export const getUser = createAsyncThunk<IUserResp, IUserReq>(
   'user/getUser',
   async function ({ token, id }) {
@@ -44,6 +48,40 @@ export const getUser = createAsyncThunk<IUserResp, IUserReq>(
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
+      });
+
+      const data = (await resp.json()) as IUserResp;
+
+      Object.assign(userResp, data);
+    } catch (e: unknown) {
+      userResp.statusCode = '1';
+      userResp.errMsg = e instanceof Error ? e.message : 'Connection error';
+    } finally {
+      return userResp;
+    }
+  }
+);
+
+export const putUser = createAsyncThunk<IUserResp, IPutUserReq>(
+  'user/putUser',
+  async function ({ token, id, user }) {
+    const userResp: IUserResp = {
+      _id: '',
+      name: '',
+      login: '',
+      statusCode: '',
+      errMsg: '',
+    };
+
+    try {
+      const resp = await fetch(`${USERS_URL}/${id}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: user.name, login: user.login, password: '' }),
       });
 
       const data = (await resp.json()) as IUserResp;

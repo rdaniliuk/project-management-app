@@ -3,7 +3,7 @@ import 'antd/dist/antd.css';
 import { Button, Form, Input, Modal } from 'antd';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { hideUserProfileModal } from 'store/modalsSlice';
-import { clearUserError, getUser, resetUser } from 'store/userSlice';
+import { clearUserError, getUser, putUser, resetUser } from 'store/userSlice';
 import { notification } from 'antd';
 import Loader from 'components/Loader/Loader';
 import { authErr, resetAuth } from 'store/authSlice';
@@ -29,6 +29,12 @@ const UserProfileModal = () => {
   }, [dispatch, id, isUserProfileShown, token]);
 
   useEffect(() => {
+    if (!isLoading) {
+      form.resetFields();
+    }
+  }, [form, isLoading]);
+
+  useEffect(() => {
     if (statusCode && authErr.includes(+statusCode)) {
       dispatch(resetAuth());
       dispatch(resetUser());
@@ -47,26 +53,20 @@ const UserProfileModal = () => {
     dispatch(hideUserProfileModal());
   };
 
-  const handleBtn = (callback: (values: IValues) => void) => {
+  const handleOk = () => {
     form
       .validateFields()
       .then((values) => {
         form.resetFields();
         dispatch(hideUserProfileModal());
-        callback(values);
+        dispatch(putUser({ id, token, user: values }));
       })
       .catch(() => {
         return;
       });
   };
 
-  const handleOk = () => {
-    handleBtn(console.log);
-  };
-
-  const handleDelete = () => {
-    handleBtn(console.log);
-  };
+  const handleDelete = () => {};
 
   return (
     <>
@@ -88,7 +88,7 @@ const UserProfileModal = () => {
       >
         {isLoading && <Loader />}
         {!isLoading && (
-          <Form form={form} layout="vertical" name="form_in_modal">
+          <Form form={form} layout="vertical" name="user-profile">
             <Form.Item
               name="name"
               label="Name"
@@ -103,14 +103,36 @@ const UserProfileModal = () => {
               initialValue={login}
               rules={[{ required: true, message: 'should not be empty' }]}
             >
-              <Input placeholder={'Login'} allowClear />
+              <Input placeholder={'Login'} autoComplete="username" allowClear />
             </Form.Item>
             <Form.Item
               name="password"
               label="Password"
-              rules={[{ required: true, message: 'Please input your Password!' }]}
+              rules={[
+                { required: true, message: 'Please input your Password!' },
+                { min: 8, message: 'Must be at least 8 symbols' },
+                { pattern: /^[0-9a-zA-Z]+$/, message: 'letters and numbers only!' },
+              ]}
             >
-              <Input type="password" placeholder="Password" autoComplete="current-password" />
+              <Input type="password" placeholder="Password" allowClear />
+            </Form.Item>
+            <Form.Item
+              name="confirm"
+              label="Confirm password"
+              dependencies={['password']}
+              rules={[
+                { required: true, message: 'Please confirm your Password!' },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue('password') === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error('The passwords do not match!'));
+                  },
+                }),
+              ]}
+            >
+              <Input type="password" placeholder="Confirm password" allowClear />
             </Form.Item>
           </Form>
         )}
