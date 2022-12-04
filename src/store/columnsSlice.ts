@@ -5,7 +5,7 @@ interface IColumn {
   _id: string;
   title: string;
   order: number;
-  boardId: string;
+  boardId?: string;
 }
 
 interface IColumns {
@@ -22,6 +22,16 @@ const initialColumns: IColumns = {
   colStatusCode: '',
   colErrMsg: '',
   isUpdateNeeded: false,
+};
+
+const initialColumnResp: IColumnResp = {
+  column: {
+    _id: '',
+    title: '',
+    order: 0,
+  },
+  statusCode: '',
+  errMsg: '',
 };
 
 interface IGetColumnsResp {
@@ -41,6 +51,8 @@ export interface IColumnReq {
   id: string;
   boardId: string;
 }
+
+type NewColumn = Omit<IColumn, '_id'>;
 
 export const getColumns = createAsyncThunk<IGetColumnsResp, { token: string; boardId: string }>(
   'columns/getColumns',
@@ -80,16 +92,7 @@ export const getColumns = createAsyncThunk<IGetColumnsResp, { token: string; boa
 export const deleteColumn = createAsyncThunk<IColumnResp, IColumnReq>(
   'columns/deleteColumn',
   async function ({ token, id, boardId }) {
-    const columnResp: IColumnResp = {
-      column: {
-        _id: '',
-        title: '',
-        order: 0,
-        boardId: '',
-      },
-      statusCode: '',
-      errMsg: '',
-    };
+    const columnResp = initialColumnResp;
 
     try {
       const resp = await fetch(`${BOARDS_URL}/${boardId}/columns/${id}`, {
@@ -110,6 +113,63 @@ export const deleteColumn = createAsyncThunk<IColumnResp, IColumnReq>(
     }
   }
 );
+
+export const createColumn = createAsyncThunk<
+  IColumnResp,
+  { column: NewColumn; token: string; boardId: string }
+>('column/createColumn', async function ({ token, column, boardId }) {
+  const columnResp = initialColumnResp;
+
+  try {
+    const resp = await fetch(`${BOARDS_URL}/${boardId}/columns`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(column),
+    });
+
+    const data = (await resp.json()) as IColumn;
+    Object.assign(columnResp, data);
+  } catch (e: unknown) {
+    columnResp.statusCode = '1';
+    columnResp.errMsg = e instanceof Error ? e.message : 'Connection error';
+  } finally {
+    return columnResp;
+  }
+});
+
+export const updateColumn = createAsyncThunk<
+  IColumnResp,
+  { id: string; token: string; boardId: string; newTitle: string }
+>('column/updateColumn', async function ({ token, id, boardId, newTitle }) {
+  const columnResp = initialColumnResp;
+
+  try {
+    const resp = await fetch(`${BOARDS_URL}/${boardId}/columns/${id}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: newTitle,
+        order: 0,
+      }),
+    });
+
+    const data = (await resp.json()) as IColumn;
+    Object.assign(columnResp, data);
+  } catch (e: unknown) {
+    columnResp.statusCode = '1';
+    columnResp.errMsg = e instanceof Error ? e.message : 'Connection error';
+  } finally {
+    return columnResp;
+  }
+});
 
 const columnsSlice = createSlice({
   name: 'columns',
@@ -135,6 +195,16 @@ const columnsSlice = createSlice({
         columns.colIsLoading = true;
       })
       .addCase(deleteColumn.fulfilled, (columns, action) => {
+        const { statusCode, errMsg } = action.payload;
+        columns.colErrMsg = errMsg;
+        columns.colStatusCode = statusCode;
+        columns.colIsLoading = false;
+        columns.isUpdateNeeded = !errMsg;
+      })
+      .addCase(createColumn.pending, (columns) => {
+        columns.colIsLoading = true;
+      })
+      .addCase(createColumn.fulfilled, (columns, action) => {
         const { statusCode, errMsg } = action.payload;
         columns.colErrMsg = errMsg;
         columns.colStatusCode = statusCode;

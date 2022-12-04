@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classes from './TaskListTemplate.module.css';
 import { Button } from 'antd';
 import {
@@ -10,13 +10,57 @@ import {
 import { Input } from 'antd';
 import Task from 'components/TaskTemplate/Task';
 import { showDeleteModal } from 'store/modalsSlice';
-import { useAppDispatch } from 'store/hooks';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { updateColumn } from 'store/columnsSlice';
+import { Droppable } from 'react-beautiful-dnd';
+import { getTasks } from 'store/tasksSlice';
+import { useLocation } from 'react-router-dom';
 
-const TaskListTemplate = (props: { title: string; id: string }) => {
+interface TaskListProps {
+  title: string;
+  id: string;
+  token: string;
+  boardId: string;
+}
+
+export const testTaskData = [
+  {
+    name: 'test task name1',
+    description: 'test description okoko okokok okok',
+    id: '1',
+  },
+  {
+    name: 'test task name2',
+    description: 'test description okoko okokok okok',
+    id: '2',
+  },
+  {
+    name: 'test task name3',
+    description: 'test description okoko okokok okok',
+    id: '3',
+  },
+  {
+    name: 'test task name4',
+    description: 'test description okoko okokok okok',
+    id: '4',
+  },
+];
+
+const TaskListTemplate = (props: TaskListProps) => {
+  const { tasks, tasksLoading, tasksStatusCode, tasksErrMsg, tasksIsUpdateNeeded } = useAppSelector(
+    (state) => state.tasks
+  );
+  const { token } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(getTasks({ token, boardId: props.boardId, columnId: props.id }));
+    return;
+  }, [dispatch, props.boardId, props.id, token]);
+
   const [renameListStatus, setRenameListStatus] = useState(false);
   const [listName, setListName] = useState(props.title);
   const [listNameBeforeChange, setListNameBeforeChange] = useState(listName);
-  const dispatch = useAppDispatch();
 
   return (
     <div className={classes.list}>
@@ -62,6 +106,14 @@ const TaskListTemplate = (props: { title: string; id: string }) => {
                 onClick={() => {
                   setRenameListStatus(false);
                   setListNameBeforeChange(listName);
+                  dispatch(
+                    updateColumn({
+                      id: props.id,
+                      token: props.token,
+                      boardId: props.boardId,
+                      newTitle: listName,
+                    })
+                  );
                 }}
               />
               <Button
@@ -76,11 +128,22 @@ const TaskListTemplate = (props: { title: string; id: string }) => {
           </>
         )}
       </div>
-      <div className={classes.tasks}>
-        <Task />
-        <Task />
-        <Task />
-      </div>
+      <Droppable droppableId={props.id}>
+        {(provided) => (
+          <div className={classes.tasks} {...provided.droppableProps} ref={provided.innerRef}>
+            {tasks.map((task, index) => (
+              <Task
+                key={task._id}
+                name={task.title}
+                description={task.description}
+                id={task._id}
+                index={index}
+              />
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
     </div>
   );
 };
