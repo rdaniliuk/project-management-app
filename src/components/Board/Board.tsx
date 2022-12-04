@@ -13,7 +13,9 @@ import { authErr, resetAuth } from 'store/authSlice';
 import Loader from 'components/Loader/Loader';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { hideDeleteModal, showCreateModal, showDeleteModal } from 'store/modalsSlice';
+import { DragDropContext } from 'react-beautiful-dnd';
 import callDeleteModal from 'components/modals/DeleteModal';
+import { getTasks } from 'store/tasksSlice';
 
 const Board = () => {
   const { title, _id, description, statusCode, errMsg, isLoading, isDeleted } = useAppSelector(
@@ -22,6 +24,7 @@ const Board = () => {
   const { columns, colIsLoading, colStatusCode, colErrMsg, isUpdateNeeded } = useAppSelector(
     (state) => state.columns
   );
+
   const { token } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const [notify, contextHolder] = notification.useNotification();
@@ -116,6 +119,18 @@ const Board = () => {
     }
   }, [dispatch, isUpdateNeeded, navigate]);
 
+  const onDragEnd = () => {
+    // const { destination, source, draggableId } = result;
+    // if (!destination) {
+    //   return;
+    // }
+    // if (destination.droppableId === source.droppableId && destination.index === source.index) {
+    //   return;
+    // }
+    // const column = columns[source.droppableId];
+    // const newTaskIds= Array.from(column.)
+  };
+
   return (
     <div className={classes.board}>
       {contextHolder}
@@ -148,15 +163,17 @@ const Board = () => {
           <hr />
           <div className={classes.list}>
             {!colIsLoading ? (
-              columns.map(({ _id, title }) => (
-                <TaskListTemplate
-                  key={_id}
-                  title={title}
-                  id={_id}
-                  token={token}
-                  boardId={boardId}
-                />
-              ))
+              <DragDropContext onDragEnd={onDragEnd}>
+                {columns.map(({ _id, title }) => (
+                  <TaskListTemplate
+                    key={_id}
+                    title={title}
+                    id={_id}
+                    token={token}
+                    boardId={boardId}
+                  />
+                ))}
+              </DragDropContext>
             ) : (
               <Loader />
             )}
