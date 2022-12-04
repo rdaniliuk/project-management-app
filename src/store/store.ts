@@ -5,6 +5,7 @@ import modalsSlice from './modalsSlice';
 import usersReducer from './usersSlice';
 import boardReducer from './boardSlice';
 import columnsReducer from './columnsSlice';
+import userSlice from './userSlice';
 import tasksReducer from './tasksSlice';
 
 const store = configureStore({
@@ -15,6 +16,7 @@ const store = configureStore({
     board: boardReducer,
     columns: columnsReducer,
     modals: modalsSlice,
+    user: userSlice,
     tasks: tasksReducer,
   },
 });

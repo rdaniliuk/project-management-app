@@ -15,6 +15,7 @@ import { useHeader } from 'components/hooks/useHeader';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { resetAuth } from 'store/authSlice';
 import { useNavigate } from 'react-router-dom';
+import { showUserProfileModal } from 'store/modalsSlice';
 
 const Header = () => {
   const headerWrapper = useHeader();
@@ -42,7 +43,12 @@ const Header = () => {
         ) : null}
         {isLogged ? (
           <>
-            <Button icon={<UserOutlined />} size={'large'} type={'link'} onClick={() => {}}>
+            <Button
+              icon={<UserOutlined />}
+              size={'large'}
+              type={'link'}
+              onClick={() => dispatch(showUserProfileModal())}
+            >
               <div className={classes.button__name}>Profile</div>
             </Button>
             <Button
