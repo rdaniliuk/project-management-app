@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import classes from './Board.module.css';
 import { Button } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
@@ -13,9 +13,9 @@ import { authErr, resetAuth } from 'store/authSlice';
 import Loader from 'components/Loader/Loader';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { hideDeleteModal, showCreateModal, showDeleteModal } from 'store/modalsSlice';
-import { DragDropContext } from 'react-beautiful-dnd';
+import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import callDeleteModal from 'components/modals/DeleteModal';
-import { getTasks } from 'store/tasksSlice';
+import { getTasks, updateTasks, updateTaskDips } from 'store/tasksSlice';
 
 const Board = () => {
   const { title, _id, description, statusCode, errMsg, isLoading, isDeleted } = useAppSelector(
@@ -23,6 +23,9 @@ const Board = () => {
   );
   const { columns, colIsLoading, colStatusCode, colErrMsg, isUpdateNeeded } = useAppSelector(
     (state) => state.columns
+  );
+  const { tasks, tasksLoading, tasksStatusCode, tasksErrMsg, tasksIsUpdateNeeded } = useAppSelector(
+    (state) => state.tasks
   );
 
   const { token } = useAppSelector((state) => state.auth);
@@ -119,18 +122,53 @@ const Board = () => {
     }
   }, [dispatch, isUpdateNeeded, navigate]);
 
-  const onDragEnd = () => {
-    // const { destination, source, draggableId } = result;
-    // if (!destination) {
-    //   return;
-    // }
-    // if (destination.droppableId === source.droppableId && destination.index === source.index) {
-    //   return;
-    // }
-    // const column = columns[source.droppableId];
-    // const newTaskIds= Array.from(column.)
+  const onDragEnd = (result: DropResult) => {
+    const { destination, source } = result;
+    if (source.droppableId === destination?.droppableId) {
+      const column = columns.find((col) => col._id === source.droppableId);
+      const columnTasks = tasks.filter((task) => task.columnId === column?._id);
+      const sourceTask = columnTasks.find((task, index) => index === source.index);
+      let updateColumnTasks = columnTasks;
+      // const updateColumnTasks = columnTasks.map((task, index) => {
+      //   if (index === 0) {
+      //     return { ...task, order: 2 };
+      //   }
+      //   if (index === 1) {
+      //     return { ...task, order: 0 };
+      //   }
+      //   if (index === 2) {
+      //     return { ...task, order: 1 };
+      //   }
+      //   return task;
+      // });
+      if (destination.index > source.index) {
+        updateColumnTasks = updateColumnTasks.map((task, index) => {
+          if (task.order <= destination.index) {
+            return { ...task, order: task.order - 1 };
+          }
+          return task;
+        });
+      } else {
+        updateColumnTasks = updateColumnTasks.map((task, index) => {
+          if (task.order >= destination.index) {
+            return { ...task, order: task.order + 1 };
+          }
+          return task;
+        });
+      }
+      if (sourceTask) {
+        updateColumnTasks = updateColumnTasks.map((task) => {
+          if (task._id === sourceTask?._id) {
+            return { ...task, order: destination.index };
+          }
+          return task;
+        });
+      }
+      updateColumnTasks = updateColumnTasks.sort((a, b) => a.order - b.order);
+      dispatch(updateTaskDips(updateColumnTasks));
+      dispatch(updateTasks(updateColumnTasks));
+    }
   };
-
   return (
     <div className={classes.board}>
       {contextHolder}
