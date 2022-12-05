@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BOARDS_URL, TASKS_SET } from '../store/apiUrls';
 
-interface ITask {
+export interface ITask {
   _id: string;
   boardId: string;
   columnId: string;

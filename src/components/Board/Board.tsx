@@ -15,7 +15,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { hideDeleteModal, showCreateModal, showDeleteModal } from 'store/modalsSlice';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import callDeleteModal from 'components/modals/DeleteModal';
-import { getTasks, updateTasks, updateTaskDips } from 'store/tasksSlice';
+import { getTasks, updateTasks, updateTaskDips, ITasks } from 'store/tasksSlice';
+import { ITask } from 'store/tasksSlice';
 
 const Board = () => {
   const { title, _id, description, statusCode, errMsg, isLoading, isDeleted } = useAppSelector(
@@ -129,41 +130,19 @@ const Board = () => {
       const columnTasks = tasks.filter((task) => task.columnId === column?._id);
       const sourceTask = columnTasks.find((task, index) => index === source.index);
       let updateColumnTasks = columnTasks;
-      // const updateColumnTasks = columnTasks.map((task, index) => {
-      //   if (index === 0) {
-      //     return { ...task, order: 2 };
-      //   }
-      //   if (index === 1) {
-      //     return { ...task, order: 0 };
-      //   }
-      //   if (index === 2) {
-      //     return { ...task, order: 1 };
-      //   }
-      //   return task;
-      // });
-      if (destination.index > source.index) {
-        updateColumnTasks = updateColumnTasks.map((task, index) => {
-          if (task.order <= destination.index) {
-            return { ...task, order: task.order - 1 };
-          }
-          return task;
-        });
-      } else {
-        updateColumnTasks = updateColumnTasks.map((task, index) => {
-          if (task.order >= destination.index) {
-            return { ...task, order: task.order + 1 };
-          }
-          return task;
-        });
+      if (!sourceTask) {
+        return;
       }
-      if (sourceTask) {
-        updateColumnTasks = updateColumnTasks.map((task) => {
-          if (task._id === sourceTask?._id) {
-            return { ...task, order: destination.index };
-          }
-          return task;
-        });
-      }
+      updateColumnTasks.splice(
+        updateColumnTasks.findIndex((task) => task._id === sourceTask?._id),
+        1
+      );
+      updateColumnTasks.splice(destination.index, 0, sourceTask);
+
+      updateColumnTasks = updateColumnTasks.map((task, index) => {
+        return { ...task, order: index };
+      });
+
       updateColumnTasks = updateColumnTasks.sort((a, b) => a.order - b.order);
       dispatch(updateTaskDips(updateColumnTasks));
       dispatch(updateTasks(updateColumnTasks));
