@@ -25,11 +25,12 @@ const Task = (props: ITaskProps) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
-          onClick={() =>
-            dispatch(showInfoModal({ title: props.title, description: props.description }))
-          }
         >
-          <div>
+          <div
+            onClick={() =>
+              dispatch(showInfoModal({ title: props.title, description: props.description }))
+            }
+          >
             <span>{props.title}</span>
           </div>
           <div className={classes.buttons}>
