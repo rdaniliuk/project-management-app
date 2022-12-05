@@ -67,9 +67,6 @@ const StartScreen = () => {
                 <a href={TMATE3[2]} target="blank">
                   <Button icon={<GithubFilled />} size={'large'} type={'link'}></Button>
                 </a>
-                <a href={TMATE3[3]} target="blank">
-                  <Button icon={<LinkedinFilled />} size={'large'} type={'link'}></Button>
-                </a>
               </div>
             </div>
             <div className={classes.tmate__image}>
@@ -84,9 +81,6 @@ const StartScreen = () => {
               <div className={classes.tmate__link}>
                 <a href={TMATE2[2]} target="blank">
                   <Button icon={<GithubFilled />} size={'large'} type={'link'}></Button>
-                </a>
-                <a href={TMATE2[3]} target="blank">
-                  <Button icon={<LinkedinFilled />} size={'large'} type={'link'}></Button>
                 </a>
               </div>
             </div>

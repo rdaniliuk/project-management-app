@@ -100,6 +100,7 @@ const UserProfileModal = () => {
         forceRender
         title={`User profile`}
         open={isUserProfileShown}
+        onCancel={hideModal}
         footer={[
           <Button key="delete" onClick={handleDelete} loading={isLoading}>
             Delete

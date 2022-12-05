@@ -25,21 +25,16 @@ const Task = (props: ITaskProps) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
+          onClick={() =>
+            dispatch(showInfoModal({ title: props.title, description: props.description }))
+          }
         >
-          <div
-            onClick={() =>
-              dispatch(showInfoModal({ title: props.title, description: props.description }))
-            }
-          >
+          <div>
             <span>{props.title}</span>
           </div>
           <div className={classes.buttons}>
             <div className={classes.edit}>
-              <Button
-                icon={<EditOutlined />}
-                type={'text'}
-                onClick={() => console.log('edit task callback')}
-              />
+              <Button icon={<EditOutlined />} type={'text'} />
             </div>
             <div className={classes.delete}>
               <Button

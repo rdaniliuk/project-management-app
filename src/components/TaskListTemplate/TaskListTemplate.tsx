@@ -42,11 +42,7 @@ const TaskListTemplate = (props: TaskListProps) => {
               <span>{listName}</span>
             </div>
             <div className={classes.list__delete}>
-              <Button
-                icon={<PlusCircleOutlined style={{ color: '#fff' }} />}
-                onClick={() => console.log('add task callback')}
-                type={'link'}
-              />
+              <Button icon={<PlusCircleOutlined style={{ color: '#fff' }} />} type={'link'} />
               <Button
                 icon={<DeleteFilled style={{ color: '#fff' }} />}
                 type={'link'}
