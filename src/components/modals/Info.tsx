@@ -1,16 +1,18 @@
 import { Modal } from 'antd';
 
-interface iInfoModal {
-  name: string;
+interface IInfoModal {
+  title: string;
   description: string;
+  onOk: () => void;
 }
 
-const Info = (task: iInfoModal) => {
+const callInfoModal = (task: IInfoModal) => {
   Modal.info({
-    title: task.name,
+    title: task.title,
     content: task.description,
     okText: 'Ok',
+    onOk: task.onOk,
   });
 };
 
-export default Info;
+export default callInfoModal;

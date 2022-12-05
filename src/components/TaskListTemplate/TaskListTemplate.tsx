@@ -99,7 +99,7 @@ const TaskListTemplate = (props: TaskListProps) => {
                 .map((task, index) => (
                   <Task
                     key={task._id}
-                    name={task.title}
+                    title={task.title}
                     description={task.description}
                     id={task._id}
                     columnId={props.id}
