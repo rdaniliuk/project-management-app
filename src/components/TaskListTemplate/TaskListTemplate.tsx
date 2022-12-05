@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import classes from './TaskListTemplate.module.css';
 import { Button } from 'antd';
 import {
@@ -13,8 +13,6 @@ import { showDeleteModal } from 'store/modalsSlice';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { updateColumn } from 'store/columnsSlice';
 import { Droppable } from 'react-beautiful-dnd';
-import { getTasks } from 'store/tasksSlice';
-import { useLocation } from 'react-router-dom';
 
 interface TaskListProps {
   title: string;
@@ -24,17 +22,8 @@ interface TaskListProps {
 }
 
 const TaskListTemplate = (props: TaskListProps) => {
-  const { tasks, tasksLoading, tasksStatusCode, tasksErrMsg, tasksIsUpdateNeeded } = useAppSelector(
-    (state) => state.tasks
-  );
-  const { token } = useAppSelector((state) => state.auth);
+  const { tasks } = useAppSelector((state) => state.tasks);
   const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    dispatch(getTasks({ token, boardId: props.boardId, columnId: props.id }));
-    return;
-  }, [dispatch, props.boardId, props.id, token]);
-
   const [renameListStatus, setRenameListStatus] = useState(false);
   const [listName, setListName] = useState(props.title);
   const [listNameBeforeChange, setListNameBeforeChange] = useState(listName);
@@ -109,15 +98,18 @@ const TaskListTemplate = (props: TaskListProps) => {
         {(provided) => {
           return (
             <div className={classes.tasks} {...provided.droppableProps} ref={provided.innerRef}>
-              {tasks.map((task, index) => (
-                <Task
-                  key={task._id}
-                  name={task.title}
-                  description={task.description}
-                  id={task._id}
-                  index={index}
-                />
-              ))}
+              {tasks
+                .filter((task) => task.columnId === props.id)
+                .map((task, index) => (
+                  <Task
+                    key={task._id}
+                    name={task.title}
+                    description={task.description}
+                    id={task._id}
+                    columnId={props.id}
+                    index={index}
+                  />
+                ))}
               {provided.placeholder}
             </div>
           );

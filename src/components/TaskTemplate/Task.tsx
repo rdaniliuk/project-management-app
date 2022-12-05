@@ -10,6 +10,7 @@ interface ITaskProps {
   name: string;
   description: string;
   id: string;
+  columnId: string;
   index: number;
 }
 
@@ -40,7 +41,9 @@ const Task = (props: ITaskProps) => {
               <Button
                 icon={<DeleteOutlined />}
                 type={'text'}
-                onClick={() => dispatch(showDeleteModal({ id: '', type: 'task' }))}
+                onClick={() =>
+                  dispatch(showDeleteModal({ id: `${props.columnId}-${props.id}`, type: 'task' }))
+                }
               />
             </div>
           </div>
