@@ -12,10 +12,16 @@ import { notification } from 'antd';
 import { authErr, resetAuth } from 'store/authSlice';
 import Loader from 'components/Loader/Loader';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { hideDeleteModal, showCreateModal, showDeleteModal } from 'store/modalsSlice';
+import {
+  hideDeleteModal,
+  hideInfoModal,
+  showCreateModal,
+  showDeleteModal,
+} from 'store/modalsSlice';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import callDeleteModal from 'components/modals/DeleteModal';
 import { getTasks, updateTasks, updateTaskDips, resetTasks, deleteTask } from 'store/tasksSlice';
+import callInfoModal from 'components/modals/Info';
 
 const Board = () => {
   const { title, _id, description, statusCode, errMsg, isLoading, isDeleted } = useAppSelector(
@@ -32,7 +38,14 @@ const Board = () => {
   const { state } = useLocation();
   const boardId: string = state?.id || '';
   const navigate = useNavigate();
-  const { isDeleteShown, type, id: colId } = useAppSelector((state) => state.modals);
+  const {
+    isDeleteShown,
+    type,
+    id: colId,
+    isInfoShown,
+    title: titleInfo,
+    description: descInfo,
+  } = useAppSelector((state) => state.modals);
 
   useEffect(() => {
     if (!boardId) {
@@ -160,6 +173,18 @@ const Board = () => {
       dispatch(updateTasks(updateColumnTasks));
     }
   };
+
+  useEffect(() => {
+    if (isInfoShown) {
+      callInfoModal({
+        title: titleInfo,
+        description: descInfo,
+        onOk: () => {
+          dispatch(hideInfoModal());
+        },
+      });
+    }
+  }, [descInfo, dispatch, isInfoShown, titleInfo]);
 
   useEffect(() => {
     if (columns) {

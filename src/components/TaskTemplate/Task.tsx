@@ -2,12 +2,12 @@ import React from 'react';
 import classes from './Task.module.css';
 import { Button } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { showDeleteModal } from 'store/modalsSlice';
+import { showDeleteModal, showInfoModal } from 'store/modalsSlice';
 import { useAppDispatch } from 'store/hooks';
 import { Draggable } from 'react-beautiful-dnd';
 
 interface ITaskProps {
-  name: string;
+  title: string;
   description: string;
   id: string;
   columnId: string;
@@ -26,8 +26,12 @@ const Task = (props: ITaskProps) => {
           {...provided.dragHandleProps}
           ref={provided.innerRef}
         >
-          <div onClick={() => console.log('task info callback')}>
-            <span>{props.name}</span>
+          <div
+            onClick={() =>
+              dispatch(showInfoModal({ title: props.title, description: props.description }))
+            }
+          >
+            <span>{props.title}</span>
           </div>
           <div className={classes.buttons}>
             <div className={classes.edit}>
