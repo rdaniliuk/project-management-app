@@ -3,4 +3,6 @@
   background-color: #96CFFF;
   padding: 10px;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }

@@ -23,29 +23,6 @@ interface TaskListProps {
   boardId: string;
 }
 
-export const testTaskData = [
-  {
-    name: 'test task name1',
-    description: 'test description okoko okokok okok',
-    id: '1',
-  },
-  {
-    name: 'test task name2',
-    description: 'test description okoko okokok okok',
-    id: '2',
-  },
-  {
-    name: 'test task name3',
-    description: 'test description okoko okokok okok',
-    id: '3',
-  },
-  {
-    name: 'test task name4',
-    description: 'test description okoko okokok okok',
-    id: '4',
-  },
-];
-
 const TaskListTemplate = (props: TaskListProps) => {
   const { tasks, tasksLoading, tasksStatusCode, tasksErrMsg, tasksIsUpdateNeeded } = useAppSelector(
     (state) => state.tasks
@@ -129,20 +106,22 @@ const TaskListTemplate = (props: TaskListProps) => {
         )}
       </div>
       <Droppable droppableId={props.id}>
-        {(provided) => (
-          <div className={classes.tasks} {...provided.droppableProps} ref={provided.innerRef}>
-            {tasks.map((task, index) => (
-              <Task
-                key={task._id}
-                name={task.title}
-                description={task.description}
-                id={task._id}
-                index={index}
-              />
-            ))}
-            {provided.placeholder}
-          </div>
-        )}
+        {(provided) => {
+          return (
+            <div className={classes.tasks} {...provided.droppableProps} ref={provided.innerRef}>
+              {tasks.map((task, index) => (
+                <Task
+                  key={task._id}
+                  name={task.title}
+                  description={task.description}
+                  id={task._id}
+                  index={index}
+                />
+              ))}
+              {provided.placeholder}
+            </div>
+          );
+        }}
       </Droppable>
     </div>
   );
