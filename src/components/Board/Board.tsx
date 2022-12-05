@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import classes from './Board.module.css';
 import { Button } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
@@ -15,8 +15,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { hideDeleteModal, showCreateModal, showDeleteModal } from 'store/modalsSlice';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import callDeleteModal from 'components/modals/DeleteModal';
-import { getTasks, updateTasks, updateTaskDips, ITasks } from 'store/tasksSlice';
-import { ITask } from 'store/tasksSlice';
+import { getTasks, updateTasks, updateTaskDips, resetTasks } from 'store/tasksSlice';
 
 const Board = () => {
   const { title, _id, description, statusCode, errMsg, isLoading, isDeleted } = useAppSelector(
@@ -25,9 +24,7 @@ const Board = () => {
   const { columns, colIsLoading, colStatusCode, colErrMsg, isUpdateNeeded } = useAppSelector(
     (state) => state.columns
   );
-  const { tasks, tasksLoading, tasksStatusCode, tasksErrMsg, tasksIsUpdateNeeded } = useAppSelector(
-    (state) => state.tasks
-  );
+  const { tasks, tasksIsUpdateNeeded } = useAppSelector((state) => state.tasks);
 
   const { token } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
@@ -46,6 +43,13 @@ const Board = () => {
   useEffect(() => {
     dispatch(getBoardData({ token, id: boardId }));
   }, [boardId, dispatch, token]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetBoard());
+      dispatch(resetColumns());
+    };
+  }, [dispatch]);
 
   useEffect(() => {
     if (!token || !_id) return;
@@ -144,10 +148,29 @@ const Board = () => {
       });
 
       updateColumnTasks = updateColumnTasks.sort((a, b) => a.order - b.order);
-      dispatch(updateTaskDips(updateColumnTasks));
+      dispatch(updateTaskDips({ id: source.droppableId, tasks: updateColumnTasks }));
       dispatch(updateTasks(updateColumnTasks));
     }
   };
+
+  useEffect(() => {
+    if (columns) {
+      dispatch(resetTasks());
+      columns.forEach((column) =>
+        dispatch(getTasks({ token, boardId: _id, columnId: column._id }))
+      );
+    }
+  }, [_id, columns, dispatch, token]);
+
+  useEffect(() => {
+    if (tasksIsUpdateNeeded) {
+      dispatch(resetTasks());
+      columns.forEach((column) =>
+        dispatch(getTasks({ token, boardId: _id, columnId: column._id }))
+      );
+    }
+  }, [_id, columns, dispatch, tasksIsUpdateNeeded, token]);
+
   return (
     <div className={classes.board}>
       {contextHolder}

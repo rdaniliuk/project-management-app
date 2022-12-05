@@ -51,12 +51,12 @@ interface IUpdate extends IGetTasksReq {
   newTask: ITask;
 }
 
-interface IReorder {
-  sourceIndex: string;
-  destinationIndex: string;
-  sourceDroppableId: string;
-  destinationDroppableId: string;
-}
+// interface IReorder {
+//   sourceIndex: string;
+//   destinationIndex: string;
+//   sourceDroppableId: string;
+//   destinationDroppableId: string;
+// }
 
 interface IUpdateTasksItem {
   _id: string;
@@ -207,8 +207,10 @@ const tasksSlice = createSlice({
       tasks.tasksStatusCode = '';
       tasks.tasksErrMsg = '';
     },
-    updateTaskDips(tasks, action: PayloadAction<ITask[]>) {
-      tasks.tasks = action.payload.sort((a, b) => a.order - b.order);
+    updateTaskDips(tasks, action: PayloadAction<{ id: string; tasks: ITask[] }>) {
+      tasks.tasks = tasks.tasks
+        .filter((task) => task.columnId != action.payload.id)
+        .concat(action.payload.tasks); //.sort((a, b) => a.order - b.order));
     },
   },
   extraReducers: (builder) => {
@@ -218,20 +220,17 @@ const tasksSlice = createSlice({
       })
       .addCase(getTasks.fulfilled, (tasks, action) => {
         const { tasks: allTasks, tasksStatusCode, tasksErrMsg } = action.payload;
-        tasks.tasks = allTasks.sort((a, b) => a.order - b.order);
+        tasks.tasks = tasks.tasks.concat(allTasks.sort((a, b) => a.order - b.order));
         tasks.tasksErrMsg = tasksErrMsg;
         tasks.tasksStatusCode = tasksStatusCode;
         tasks.tasksLoading = false;
         tasks.tasksIsUpdateNeeded = false;
       })
-      .addCase(updateTasks.pending, (tasks, action) => {
-        tasks.tasks = action.meta.arg;
-      })
       .addCase(updateTasks.fulfilled, (tasks, action) => {
-        const { tasks: allTasks, statusCode, errMsg } = action.payload;
-        tasks.tasks = allTasks.sort((a, b) => a.order - b.order);
+        const { statusCode, errMsg } = action.payload;
         tasks.tasksErrMsg = errMsg;
         tasks.tasksStatusCode = statusCode;
+        tasks.tasksLoading = false;
       });
   },
 });
