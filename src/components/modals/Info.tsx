@@ -10,7 +10,6 @@ const Info = (task: iInfoModal) => {
     title: task.name,
     content: task.description,
     okText: 'Ok',
-    onOk: () => console.log('ok'),
   });
 };
 

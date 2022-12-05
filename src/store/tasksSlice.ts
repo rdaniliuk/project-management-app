@@ -50,12 +50,13 @@ interface IUpdate extends IGetTasksReq {
   newTask: ITask;
 }
 
-// interface IReorder {
-//   sourceIndex: string;
-//   destinationIndex: string;
-//   sourceDroppableId: string;
-//   destinationDroppableId: string;
-// }
+interface ICreateReq extends IGetTasksReq {
+  title: string;
+  order: number;
+  description: string;
+  userId: number;
+  users: string[];
+}
 
 interface IUpdateTasksItem {
   _id: string;
@@ -110,6 +111,44 @@ export const getTasks = createAsyncThunk<IGetTasksResp, IGetTasksReq>(
       getTasksResp.tasksErrMsg = e instanceof Error ? e.message : 'Connection error';
     } finally {
       return getTasksResp;
+    }
+  }
+);
+
+export const createTask = createAsyncThunk<IGetTaskResp, ICreateReq>(
+  'task/createTask',
+  async function ({ boardId, columnId }) {
+    const createTaskResp: IGetTaskResp = {
+      boardId: '',
+      columnId: '',
+      description: '',
+      order: 0,
+      title: '',
+      userId: '',
+      users: [],
+      _id: '',
+      statusCode: '',
+      errMsg: '',
+    };
+    try {
+      const token = localStorage.getItem('pmaTkn');
+      const resp = await fetch(`${BOARDS_URL}/${boardId}/columns/${columnId}/tasks`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(createTaskResp),
+      });
+
+      const data = (await resp.json()) as ITask;
+      Object.assign(createTaskResp, data);
+    } catch (e: unknown) {
+      createTaskResp.statusCode = '1';
+      createTaskResp.errMsg = e instanceof Error ? e.message : 'Connection error';
+    } finally {
+      return createTaskResp;
     }
   }
 );
@@ -271,6 +310,16 @@ const tasksSlice = createSlice({
         tasks.tasksErrMsg = errMsg;
         tasks.tasksStatusCode = statusCode;
         tasks.tasksLoading = false;
+      })
+      .addCase(createTask.pending, (tasks) => {
+        tasks.tasksLoading = true;
+      })
+      .addCase(createTask.fulfilled, (tasks, action) => {
+        const { statusCode, errMsg } = action.payload;
+        tasks.tasksErrMsg = errMsg;
+        tasks.tasksStatusCode = statusCode;
+        tasks.tasksLoading = false;
+        tasks.tasksIsUpdateNeeded = false;
       });
   },
 });

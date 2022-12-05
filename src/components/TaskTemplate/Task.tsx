@@ -26,16 +26,12 @@ const Task = (props: ITaskProps) => {
           {...provided.dragHandleProps}
           ref={provided.innerRef}
         >
-          <div onClick={() => console.log('task info callback')}>
+          <div>
             <span>{props.name}</span>
           </div>
           <div className={classes.buttons}>
             <div className={classes.edit}>
-              <Button
-                icon={<EditOutlined />}
-                type={'text'}
-                onClick={() => console.log('edit task callback')}
-              />
+              <Button icon={<EditOutlined />} type={'text'} />
             </div>
             <div className={classes.delete}>
               <Button
