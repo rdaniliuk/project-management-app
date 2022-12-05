@@ -76,12 +76,12 @@ const Main = () => {
       {!isLoading && (
         <CreateBoardTemplate
           onClick={() => {
-            dispatch(showCreateModal());
+            dispatch(showCreateModal({ modalType: 'board' }));
           }}
         />
       )}
       <CreateModal
-        type="Board"
+        type="board"
         onCreate={({ title, description }) => {
           dispatch(
             createBoard({

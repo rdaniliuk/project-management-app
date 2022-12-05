@@ -40,7 +40,7 @@ const Board = () => {
   const navigate = useNavigate();
   const {
     isDeleteShown,
-    type,
+    modalType,
     id: colId,
     isInfoShown,
     title: titleInfo,
@@ -103,7 +103,7 @@ const Board = () => {
       callDeleteModal({
         onOk: () => {
           dispatch(hideDeleteModal());
-          switch (type) {
+          switch (modalType) {
             case 'board':
               dispatch(deleteBoard({ token, id: boardId }));
               break;
@@ -133,7 +133,7 @@ const Board = () => {
         },
       });
     }
-  }, [colId, boardId, dispatch, isDeleteShown, token, type]);
+  }, [colId, boardId, dispatch, isDeleteShown, token, modalType]);
 
   useEffect(() => {
     if (isDeleted) {
@@ -256,13 +256,13 @@ const Board = () => {
             {!colIsLoading ? (
               <CreateTaskTemplate
                 onClick={() => {
-                  dispatch(showCreateModal());
+                  dispatch(showCreateModal({ modalType: 'column' }));
                 }}
               />
             ) : null}
           </div>
           <CreateModal
-            type="Column"
+            type="column"
             onCreate={({ title }) => {
               dispatch(
                 createColumn({

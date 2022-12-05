@@ -9,10 +9,12 @@ import {
 } from '@ant-design/icons';
 import { Input } from 'antd';
 import Task from 'components/TaskTemplate/Task';
-import { showDeleteModal } from 'store/modalsSlice';
+import { showCreateModal, showDeleteModal } from 'store/modalsSlice';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { updateColumn } from 'store/columnsSlice';
 import { Droppable } from 'react-beautiful-dnd';
+import CreateModal from 'components/modals/CreateModal';
+import { createTask } from 'store/tasksSlice';
 
 interface TaskListProps {
   title: string;
@@ -23,6 +25,7 @@ interface TaskListProps {
 
 const TaskListTemplate = (props: TaskListProps) => {
   const { tasks } = useAppSelector((state) => state.tasks);
+  const { token } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const [renameListStatus, setRenameListStatus] = useState(false);
   const [listName, setListName] = useState(props.title);
@@ -42,13 +45,34 @@ const TaskListTemplate = (props: TaskListProps) => {
               <span>{listName}</span>
             </div>
             <div className={classes.list__delete}>
-              <Button icon={<PlusCircleOutlined style={{ color: '#fff' }} />} type={'link'} />
+              <Button
+                icon={<PlusCircleOutlined style={{ color: '#fff' }} />}
+                type={'link'}
+                onClick={() => dispatch(showCreateModal({ modalType: 'task' }))}
+              />
               <Button
                 icon={<DeleteFilled style={{ color: '#fff' }} />}
                 type={'link'}
                 onClick={() => dispatch(showDeleteModal({ id: props.id, type: 'column' }))}
               />
             </div>
+            <CreateModal
+              type="task"
+              onCreate={({ title, description }) => {
+                dispatch(
+                  createTask({
+                    title: title,
+                    order: 0,
+                    description: description,
+                    userId: 0,
+                    users: [],
+                    token,
+                    boardId: props.boardId,
+                    columnId: props.id,
+                  })
+                );
+              }}
+            />
           </>
         ) : (
           <>
