@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import classes from './Board.module.css';
 import { Button } from 'antd';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, RollbackOutlined } from '@ant-design/icons';
 import TaskListTemplate from 'components/TaskListTemplate/TaskListTemplate';
 import CreateModal from 'components/modals/CreateModal';
 import CreateTaskTemplate from 'components/CreateTaskTemplate/CreateTaskTemplate';
@@ -219,9 +219,12 @@ const Board = () => {
             <div className={classes.buttons}>
               <div className={classes.edit}>
                 <Button
-                  icon={<EditOutlined />}
+                  icon={<RollbackOutlined />}
                   type={'primary'}
-                  onClick={() => console.log('edit board callback')}
+                  onClick={() => {
+                    dispatch(resetBoard());
+                    navigate('/');
+                  }}
                 />
               </div>
               <div className={classes.delete}>
