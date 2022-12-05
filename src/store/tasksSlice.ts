@@ -20,8 +20,7 @@ export interface ITasks {
   tasksIsUpdateNeeded: boolean;
 }
 
-interface IGetTaskResp {
-  task: ITask;
+interface IGetTaskResp extends ITask {
   statusCode: string;
   errMsg: string;
 }
@@ -116,19 +115,17 @@ export const getTasks = createAsyncThunk<IGetTasksResp, IGetTasksReq>(
 );
 
 export const updateTask = createAsyncThunk<IGetTaskResp, IUpdate>(
-  'task/updateTask',
+  'tasks/updateTask',
   async function ({ token, taskId, boardId, newTask, columnId }) {
     const updateTaskResp = {
-      task: {
-        boardId: '',
-        columnId: '',
-        description: '',
-        order: 0,
-        title: '',
-        userId: '',
-        users: [],
-        _id: '',
-      },
+      boardId: '',
+      columnId: '',
+      description: '',
+      order: 0,
+      title: '',
+      userId: '',
+      users: [],
+      _id: '',
       statusCode: '',
       errMsg: '',
     };
@@ -142,6 +139,43 @@ export const updateTask = createAsyncThunk<IGetTaskResp, IUpdate>(
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ newTask }),
+      });
+
+      const data = (await resp.json()) as ITask;
+      Object.assign(updateTaskResp, data);
+    } catch (e: unknown) {
+      updateTaskResp.statusCode = '1';
+      updateTaskResp.errMsg = e instanceof Error ? e.message : 'Connection error';
+    } finally {
+      return updateTaskResp;
+    }
+  }
+);
+
+export const deleteTask = createAsyncThunk<IGetTaskResp, Omit<IUpdate, 'newTask'>>(
+  'tasks/deleteTask',
+  async function ({ token, taskId, boardId, columnId }) {
+    const updateTaskResp = {
+      boardId: '',
+      columnId: '',
+      description: '',
+      order: 0,
+      title: '',
+      userId: '',
+      users: [],
+      _id: '',
+      statusCode: '',
+      errMsg: '',
+    };
+
+    try {
+      const resp = await fetch(`${BOARDS_URL}/${boardId}/columns/${columnId}/tasks/${taskId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
       });
 
       const data = (await resp.json()) as ITask;
@@ -228,6 +262,12 @@ const tasksSlice = createSlice({
       })
       .addCase(updateTasks.fulfilled, (tasks, action) => {
         const { statusCode, errMsg } = action.payload;
+        tasks.tasksErrMsg = errMsg;
+        tasks.tasksStatusCode = statusCode;
+      })
+      .addCase(deleteTask.fulfilled, (tasks, action) => {
+        const { statusCode, errMsg } = action.payload;
+        tasks.tasks = tasks.tasks.filter((task) => task._id != action.payload._id);
         tasks.tasksErrMsg = errMsg;
         tasks.tasksStatusCode = statusCode;
         tasks.tasksLoading = false;

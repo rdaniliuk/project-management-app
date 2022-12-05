@@ -106,6 +106,7 @@ const TaskListTemplate = (props: TaskListProps) => {
                     name={task.title}
                     description={task.description}
                     id={task._id}
+                    columnId={props.id}
                     index={index}
                   />
                 ))}

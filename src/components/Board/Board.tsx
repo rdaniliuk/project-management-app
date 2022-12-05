@@ -15,7 +15,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { hideDeleteModal, showCreateModal, showDeleteModal } from 'store/modalsSlice';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import callDeleteModal from 'components/modals/DeleteModal';
-import { getTasks, updateTasks, updateTaskDips, resetTasks } from 'store/tasksSlice';
+import { getTasks, updateTasks, updateTaskDips, resetTasks, deleteTask } from 'store/tasksSlice';
 
 const Board = () => {
   const { title, _id, description, statusCode, errMsg, isLoading, isDeleted } = useAppSelector(
@@ -104,7 +104,15 @@ const Board = () => {
               );
               break;
             case 'task':
-              console.log('delete task action');
+              const [columnId, taskId] = colId.split('-');
+              dispatch(
+                deleteTask({
+                  token,
+                  boardId,
+                  columnId,
+                  taskId,
+                })
+              );
           }
         },
         onCancel: () => {
