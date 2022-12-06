@@ -265,14 +265,6 @@ const Board = () => {
           <CreateModal
             type="column"
             onCreate={({ title }) => {
-              // dispatch(
-              //   createColumn({
-              //     column: {
-              //       title,
-              //     },
-              //     boardId: _id,
-              //   })
-              // );
               dispatch(
                 createColumn({
                   boardId,
