@@ -186,24 +186,6 @@ const Board = () => {
     }
   }, [descInfo, dispatch, isInfoShown, titleInfo]);
 
-  useEffect(() => {
-    if (columns) {
-      dispatch(resetTasks());
-      columns.forEach((column) =>
-        dispatch(getTasks({ token, boardId: _id, columnId: column._id }))
-      );
-    }
-  }, [_id, columns, dispatch, token]);
-
-  useEffect(() => {
-    if (tasksIsUpdateNeeded) {
-      dispatch(resetTasks());
-      columns.forEach((column) =>
-        dispatch(getTasks({ token, boardId: _id, columnId: column._id }))
-      );
-    }
-  }, [_id, columns, dispatch, tasksIsUpdateNeeded, token]);
-
   return (
     <div className={classes.board}>
       {contextHolder}

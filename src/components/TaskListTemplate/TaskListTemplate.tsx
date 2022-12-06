@@ -34,9 +34,6 @@ const TaskListTemplate = (props: TaskListProps) => {
 
   return (
     <div className={classes.list}>
-      <div>
-        {props.boardId} / {columnId} / {props.order}
-      </div>
       <div className={classes.header}>
         {!renameListStatus ? (
           <>

@@ -1,4 +1,3 @@
-import { IconBaseProps } from '@ant-design/icons/lib/components/Icon';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { BOARDS_URL } from '../store/apiUrls';
 
