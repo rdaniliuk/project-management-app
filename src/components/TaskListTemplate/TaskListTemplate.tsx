@@ -31,8 +31,12 @@ const TaskListTemplate = (props: TaskListProps) => {
   const [listName, setListName] = useState(props.title);
   const [listNameBeforeChange, setListNameBeforeChange] = useState(listName);
   const columnId = props.id;
+
   return (
     <div className={classes.list}>
+      <div>
+        {props.boardId} / {columnId} / {props.order}
+      </div>
       <div className={classes.header}>
         {!renameListStatus ? (
           <>
@@ -48,7 +52,7 @@ const TaskListTemplate = (props: TaskListProps) => {
               <Button
                 icon={<PlusCircleOutlined style={{ color: '#fff' }} />}
                 type={'link'}
-                onClick={() => dispatch(showCreateModal({ modalType: 'task' }))}
+                onClick={() => dispatch(showCreateModal({ modalType: 'task', modalId: columnId }))}
               />
               <Button
                 icon={<DeleteFilled style={{ color: '#fff' }} />}
@@ -57,12 +61,13 @@ const TaskListTemplate = (props: TaskListProps) => {
               />
             </div>
             <CreateModal
+              modalId={columnId}
               type="task"
               onCreate={({ title, description }) => {
                 dispatch(
                   createTask({
                     title: title,
-                    order: 1024,
+                    order: 0,
                     description: description,
                     userId: 0,
                     users: [],

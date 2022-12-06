@@ -9,12 +9,14 @@ interface IModals {
   isInfoShown: boolean;
   title: string;
   description: string;
+  modalId?: string;
 }
 
 const initialModals: IModals = {
   isDeleteShown: false,
   id: '',
   modalType: '',
+  modalId: undefined,
   isCreateShown: false,
   isUserProfileShown: false,
   isInfoShown: false,
@@ -39,13 +41,18 @@ const modalsSlice = createSlice({
       state.id = '';
       state.modalType = '';
     },
-    showCreateModal(state, action: PayloadAction<{ modalType: string }>) {
+    showCreateModal(state, action: PayloadAction<{ modalType: string; modalId?: string }>) {
       state.isCreateShown = true;
       state.modalType = action.payload.modalType;
+
+      if (action.payload.modalId) {
+        state.modalId = action.payload.modalId;
+      }
     },
     hideCreateModal(state) {
       state.isCreateShown = false;
       state.modalType = undefined;
+      state.modalId = undefined;
     },
     showUserProfileModal(state) {
       state.isUserProfileShown = true;
