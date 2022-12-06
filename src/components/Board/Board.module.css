@@ -1,0 +1,33 @@
+.board {
+  height: calc(100vh - 155px);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.name {
+  font-weight: 800;
+}
+
+.description {
+  max-height: 45px;
+  overflow: auto;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.list {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 20px;
+  overflow: auto;
+}

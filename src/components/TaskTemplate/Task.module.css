@@ -1,0 +1,12 @@
+.task {
+  background-color: hsla(0, 0%, 100%, 0.8);
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px;
+}
+
+.buttons {
+  display: flex;
+}
