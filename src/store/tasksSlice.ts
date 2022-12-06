@@ -50,12 +50,14 @@ interface IUpdate extends IGetTasksReq {
   newTask: ITask;
 }
 
-interface ICreateReq extends IGetTasksReq {
+interface ICreateReq {
   title: string;
   order: number;
   description: string;
   userId: number;
   users: string[];
+  boardId: string;
+  columnId: string;
 }
 
 interface IUpdateTasksItem {
@@ -117,7 +119,7 @@ export const getTasks = createAsyncThunk<IGetTasksResp, IGetTasksReq>(
 
 export const createTask = createAsyncThunk<IGetTaskResp, ICreateReq>(
   'task/createTask',
-  async function ({ boardId, columnId }) {
+  async function (data) {
     const createTaskResp: IGetTaskResp = {
       boardId: '',
       columnId: '',
@@ -130,6 +132,8 @@ export const createTask = createAsyncThunk<IGetTaskResp, ICreateReq>(
       statusCode: '',
       errMsg: '',
     };
+
+    const { boardId, columnId, ...bodyData } = data;
     try {
       const token = localStorage.getItem('pmaTkn');
       const resp = await fetch(`${BOARDS_URL}/${boardId}/columns/${columnId}/tasks`, {
@@ -139,7 +143,7 @@ export const createTask = createAsyncThunk<IGetTaskResp, ICreateReq>(
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(createTaskResp),
+        body: JSON.stringify(bodyData),
       });
 
       const data = (await resp.json()) as ITask;
@@ -315,7 +319,8 @@ const tasksSlice = createSlice({
         tasks.tasksLoading = true;
       })
       .addCase(createTask.fulfilled, (tasks, action) => {
-        const { statusCode, errMsg } = action.payload;
+        const { statusCode, errMsg, ...task } = action.payload;
+        tasks.tasks.push(task);
         tasks.tasksErrMsg = errMsg;
         tasks.tasksStatusCode = statusCode;
         tasks.tasksLoading = false;

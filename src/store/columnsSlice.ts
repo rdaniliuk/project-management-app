@@ -1,3 +1,4 @@
+import { IconBaseProps } from '@ant-design/icons/lib/components/Icon';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { BOARDS_URL } from '../store/apiUrls';
 
@@ -52,7 +53,10 @@ export interface IColumnReq {
   boardId: string;
 }
 
-type NewColumn = Omit<IColumn, '_id'>;
+type AddCOlumnReq = {
+  column: Partial<IColumn>;
+  boardId: string;
+};
 
 export const getColumns = createAsyncThunk<IGetColumnsResp, { token: string; boardId: string }>(
   'columns/getColumns',
@@ -114,32 +118,38 @@ export const deleteColumn = createAsyncThunk<IColumnResp, IColumnReq>(
   }
 );
 
-export const createColumn = createAsyncThunk<
-  IColumnResp,
-  { column: NewColumn; token: string; boardId: string }
->('column/createColumn', async function ({ token, column, boardId }) {
-  const columnResp = initialColumnResp;
+export const createColumn = createAsyncThunk<IColumnResp, AddCOlumnReq>(
+  'column/createColumn',
+  async function ({ column, boardId }, thunkApi) {
+    const columnResp = initialColumnResp;
+    const {
+      columns: { columns },
+    } = thunkApi.getState() as { columns: IColumns };
+    const sortedColumns = [...columns].sort((a, b) => b.order - a.order);
+    const [biggestOrderColum] = sortedColumns;
+    const body = { ...column, order: (biggestOrderColum?.order || 0) + 1 };
+    const token = localStorage.getItem('pmaTkn');
+    try {
+      const resp = await fetch(`${BOARDS_URL}/${boardId}/columns`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
 
-  try {
-    const resp = await fetch(`${BOARDS_URL}/${boardId}/columns`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(column),
-    });
-
-    const data = (await resp.json()) as IColumn;
-    Object.assign(columnResp, data);
-  } catch (e: unknown) {
-    columnResp.statusCode = '1';
-    columnResp.errMsg = e instanceof Error ? e.message : 'Connection error';
-  } finally {
-    return columnResp;
+      const data = (await resp.json()) as IColumn;
+      Object.assign(columnResp, data);
+    } catch (e: unknown) {
+      columnResp.statusCode = '1';
+      columnResp.errMsg = e instanceof Error ? e.message : 'Connection error';
+    } finally {
+      return columnResp;
+    }
   }
-});
+);
 
 export const updateColumn = createAsyncThunk<
   IColumnResp,

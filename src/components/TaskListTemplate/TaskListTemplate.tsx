@@ -21,18 +21,21 @@ interface TaskListProps {
   id: string;
   token: string;
   boardId: string;
+  order: number;
 }
 
 const TaskListTemplate = (props: TaskListProps) => {
   const { tasks } = useAppSelector((state) => state.tasks);
-  const { token } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const [renameListStatus, setRenameListStatus] = useState(false);
   const [listName, setListName] = useState(props.title);
   const [listNameBeforeChange, setListNameBeforeChange] = useState(listName);
-
+  const columnId = props.id;
   return (
     <div className={classes.list}>
+      <div>
+        {props.boardId} / {columnId} / {props.order}
+      </div>
       <div className={classes.header}>
         {!renameListStatus ? (
           <>
@@ -62,13 +65,12 @@ const TaskListTemplate = (props: TaskListProps) => {
                 dispatch(
                   createTask({
                     title: title,
-                    order: 0,
+                    order: 1024,
                     description: description,
                     userId: 0,
                     users: [],
-                    token,
                     boardId: props.boardId,
-                    columnId: props.id,
+                    columnId: columnId,
                   })
                 );
               }}

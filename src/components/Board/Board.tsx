@@ -240,13 +240,14 @@ const Board = () => {
           <div className={classes.list}>
             {!colIsLoading ? (
               <DragDropContext onDragEnd={onDragEnd}>
-                {columns.map(({ _id, title }) => (
+                {columns.map(({ _id, title, order }) => (
                   <TaskListTemplate
                     key={_id}
                     title={title}
                     id={_id}
                     token={token}
                     boardId={boardId}
+                    order={order}
                   />
                 ))}
               </DragDropContext>
@@ -264,14 +265,18 @@ const Board = () => {
           <CreateModal
             type="column"
             onCreate={({ title }) => {
+              // dispatch(
+              //   createColumn({
+              //     column: {
+              //       title,
+              //     },
+              //     boardId: _id,
+              //   })
+              // );
               dispatch(
                 createColumn({
-                  token,
-                  column: {
-                    title,
-                    order: 1,
-                  },
-                  boardId: _id,
+                  boardId,
+                  column: { title },
                 })
               );
             }}
